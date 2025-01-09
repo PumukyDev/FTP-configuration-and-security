@@ -1,0 +1,10 @@
+---
+- name: Install FTP service
+  hosts: ftp
+  become: True
+  tasks:
+    - name: Install packages
+      ansible.builtin.apt:
+        update_cache: True
+        pkg:
+          - ftp

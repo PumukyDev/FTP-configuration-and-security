@@ -1,0 +1,7 @@
+all:
+  hosts:
+    ftp:
+      ansible_host: 127.0.0.1
+  vars:
+    ansible_user: vagrant
+    ansible_ssh_port: 2201
