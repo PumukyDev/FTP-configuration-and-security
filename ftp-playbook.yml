@@ -8,3 +8,12 @@
         update_cache: True
         pkg:
           - ftp
+
+- name: Configure FTP service anonymous
+  hosts: ftp
+  become: True
+  tasks:
+    - name: Install vsftp
+      apt:
+        name: vsftp
+        state: present
