@@ -13,7 +13,7 @@
   hosts: ftp
   become: True
   tasks:
-    - name: Install vsftp
+    - name: Install vsftpd
       apt:
-        name: vsftp
+        name: vsftpd
         state: present
