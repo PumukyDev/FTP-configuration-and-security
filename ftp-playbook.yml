@@ -13,7 +13,11 @@
   hosts: ftp_mirror
   become: True
   tasks:
-    - name: Install vsftp
+    - name: Install vsftpd
       apt:
-        name: vsftp
+        name: vsftpd
         state: present
+    - name: Copy vsftpd.conf
+      copy:
+        src: vsftpd.conf
+        dest: /etc/vsftpd.conf
