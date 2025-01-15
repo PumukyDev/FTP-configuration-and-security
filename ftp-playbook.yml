@@ -17,3 +17,7 @@
       apt:
         name: vsftpd
         state: present
+    - name: Copy vsftpd.conf
+      copy:
+        src: vsftpd.conf
+        dest: /etc/vsftpd.conf
