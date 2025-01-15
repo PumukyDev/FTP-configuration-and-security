@@ -1,6 +1,6 @@
 ---
 - name: Install FTP service
-  hosts: ftp
+  hosts: ftp_mirror
   become: True
   tasks:
     - name: Install packages
@@ -9,8 +9,8 @@
         pkg:
           - ftp
 
-- name: Configure FTP service anonymous
-  hosts: ftp
+- name: Configure FTP service 
+  hosts: ftp_mirror
   become: True
   tasks:
     - name: Install vsftp
