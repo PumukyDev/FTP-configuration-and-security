@@ -54,6 +54,9 @@
       register: zone_check
       failed_when: zone_check.rc != 0
 
+    - name: Validate Bind9 configuration
+      command: named-checkconf
+
     - name: Restart bind9
       service:
         name: bind9
