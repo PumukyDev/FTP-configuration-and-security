@@ -18,7 +18,7 @@
       loop: 
         - { src: "dns/named.conf.local", dest: "/etc/bind/" }
         - { src: "dns/named.conf.options", dest: "/etc/bind/" }
-        - { src: "dns/db.sri.ies", dest: "/var/lib/bind" }
+        - { src: "dns/db.sri.ies", dest: "/etc/bind" }
         - { src: "dns/named", dest: "/etc/default/" }
 
     - name: Set permissions for Bind9
