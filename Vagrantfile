@@ -6,6 +6,7 @@ Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
 
   config.vm.define "dns" do |dns|
+  dns.vm.hostname = "ns.sri.ies"  
   dns.vm.network "private_network", ip: "192.168.57.10"
   end
 

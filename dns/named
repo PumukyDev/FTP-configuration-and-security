@@ -1,0 +1,3 @@
+# Run bind9 in a chroot environment (recommended for security).
+# Set to 'no' to disable chroot.
+OPTIONS="-u bind"
