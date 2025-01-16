@@ -15,13 +15,24 @@
       copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
-      
       loop: 
         - { src: "dns/named.conf.local", dest: "/etc/bind/" }
         - { src: "dns/named.conf.options", dest: "/etc/bind/" }
-        - { src: "dns/dbs.sri.ies", dest: "/var/lib/bind" }
-        - { src: "dns/named", dest: "/etc/defaults/" }
-      
+        - { src: "dns/db.sri.ies", dest: "/var/lib/bind" }
+        - { src: "dns/named", dest: "/etc/default/" }
+
+    - name: Set permissions for Bind9
+      file:
+        path: "{{ item }}"
+        owner: bind
+        group: bind
+        mode: '0644'
+      loop:
+        - /etc/bind/named.conf.local
+        - /etc/bind/named.conf.options
+        - /etc/bind/db.sri.ies
+        - /etc/default/named
+
     - name: Restart bind9
       service:
         name: bind9
