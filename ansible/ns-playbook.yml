@@ -33,6 +33,27 @@
         - /etc/bind/db.sri.ies
         - /etc/default/named
 
+    - name: Update serial in db.sri.ies
+      replace:
+        path: /etc/bind/db.sri.ies
+        regexp: '(\d+)\s*;\s*Serial'
+        replace: "{{ lookup('pipe', 'date +%Y%m%d%H') }} ; Serial"
+
+    - name: Restart Bind9 service
+      service:
+        name: bind9
+        state: restarted
+
+    - name: Validate DNS configuration
+      command: named-checkconf
+      register: conf_check
+      failed_when: conf_check.rc != 0
+
+    - name: Validate zone file
+      command: named-checkzone sri.ies /etc/bind/db.sri.ies
+      register: zone_check
+      failed_when: zone_check.rc != 0
+
     - name: Restart bind9
       service:
         name: bind9
