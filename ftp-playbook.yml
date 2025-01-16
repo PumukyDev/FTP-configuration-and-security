@@ -1,0 +1,31 @@
+---
+- name: Install FTP service
+  hosts: ftps
+  become: True
+  tasks:
+    - name: Install packages
+      ansible.builtin.apt:
+        update_cache: True
+        pkg:
+          - ftp
+          - vsftpd
+
+- name: Configure FTP service 
+  hosts: ftp
+  become: True
+  tasks:
+    - name: Copy ftp.vsftpd.conf
+      copy:
+        src: ftp.vsftpd.conf
+        dest: /etc/vsftpd.conf
+
+- name: Configure FTP service 
+  hosts: mirror
+  become: True
+  tasks:
+    - name: Copy /files/mirror.vsftpd.conf
+      copy:
+        src: mirror.vsftpd.conf
+        dest: /etc/vsftpd.conf
+
+        
