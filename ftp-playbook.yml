@@ -54,6 +54,12 @@
         dest: /etc/vsftpd.conf
       when: "'mirror' in group_names"
 
+    - name: Copy chroot_list for mirror
+      ansible.builtin.copy:
+        src: /files/vsftpd.chroot_list
+        dest: /etc/vsftpd.chroot_list
+      when: "'mirror' in group_names"
+
     - name: Create users for mirror
       when: "'mirror' in group_names"
       block:
