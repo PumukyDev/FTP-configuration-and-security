@@ -1,0 +1,15 @@
+all:
+  vars:
+    ansible_host: 127.0.0.1
+
+dns:
+  hosts:
+    dns:
+      ansible_ssh_port: 2100
+
+ftps:
+  hosts:
+    mirror:
+      ansible_ssh_port: 2200
+    ftp:
+      ansible_ssh_port: 2300

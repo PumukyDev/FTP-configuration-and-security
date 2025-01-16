@@ -1,8 +1,0 @@
-ftps:
-  hosts:
-    ftp:
-      ansible_host: 127.0.0.1
-      ansible_ssh_port: 2201  
-    mirror:
-      ansible_host: 127.0.0.1
-      ansible_ssh_port: 2200 

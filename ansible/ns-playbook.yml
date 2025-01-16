@@ -5,21 +5,20 @@
     - name: Install bind9
       apt:
         name: 
-        - bind9
-        - bind9utils
-        - bind9-doc
+          - bind9
+          - bind9utils
+          - bind9-doc
         update_cache: yes
-
 
     - name: Copy the DNS config
       copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
       loop: 
-        - { src: "dns/named.conf.local", dest: "/etc/bind/" }
-        - { src: "dns/named.conf.options", dest: "/etc/bind/" }
-        - { src: "dns/db.sri.ies", dest: "/etc/bind" }
-        - { src: "dns/named", dest: "/etc/default/" }
+        - { src: "../files/dns/named.conf.local", dest: "/etc/bind/named.conf.local" }
+        - { src: "../files/dns/named.conf.options", dest: "/etc/bind/named.conf.options" }
+        - { src: "../files/dns/db.sri.ies", dest: "/etc/bind/db.sri.ies" }
+        - { src: "../files/dns/named", dest: "/etc/default/named" }
 
     - name: Set permissions for Bind9
       file:

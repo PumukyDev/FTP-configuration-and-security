@@ -16,19 +16,19 @@
   tasks:
     - name: Copy ftp.vsftpd.conf
       copy:
-        src: ftp.vsftpd.conf
+        src: ../files/ftp/ftp.vsftpd.conf
         dest: /etc/vsftpd.conf
 
 - name: Configure FTP service mirror
   hosts: mirror
   become: True
   tasks:
-    - name: Copy /files/mirror.vsftpd.conf
+    - name: Copy mirror.vsftpd.conf
       copy:
-        src: mirror.vsftpd.conf
+        src: ../files/ftp/mirror.vsftpd.conf
         dest: /etc/vsftpd.conf
 
-- name: Configura los usuario de mirror
+- name: Configure users for mirror
   hosts: mirror
   become: true
   vars:
@@ -44,19 +44,19 @@
 
     - name: Copy FTP configuration for ftps
       ansible.builtin.copy:
-        src: ftp.vsftpd.conf
+        src: ../files/ftp/ftp.vsftpd.conf
         dest: /etc/vsftpd.conf
       when: "'ftps' in group_names"
 
     - name: Copy FTP configuration for mirror
       ansible.builtin.copy:
-        src: mirror.vsftpd.conf
+        src: ../files/ftp/mirror.vsftpd.conf
         dest: /etc/vsftpd.conf
       when: "'mirror' in group_names"
 
     - name: Copy chroot_list for mirror
       ansible.builtin.copy:
-        src: /files/vsftpd.chroot_list
+        src: ../files/ftp/vsftpd.chroot_list
         dest: /etc/vsftpd.chroot_list
       when: "'mirror' in group_names"
 
@@ -95,7 +95,7 @@
 
     - name: Generate user-specific vsftpd configurations
       ansible.builtin.template:
-        src: templates/vsftpd.conf.j2
+        src: ../templates/vsftpd.conf.j2
         dest: "/etc/vsftpd_{{ user }}.conf"
         owner: root
         group: root
