@@ -19,7 +19,7 @@
         src: ftp.vsftpd.conf
         dest: /etc/vsftpd.conf
 
-- name: Configure FTP service 
+- name: Configure FTP service mirror
   hosts: mirror
   become: True
   tasks:
@@ -28,4 +28,85 @@
         src: mirror.vsftpd.conf
         dest: /etc/vsftpd.conf
 
-        
+- name: Configura los usuario de mirror
+  hosts: mirror
+  become: true
+  vars:
+    charles_password: "{{ '1234' | password_hash('sha512') }}"
+    laura_password: "{{ '1234' | password_hash('sha512') }}"
+  tasks:
+    - name: Install required packages
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - vsftpd
+        state: present
+
+    - name: Copy FTP configuration for ftps
+      ansible.builtin.copy:
+        src: ftp.vsftpd.conf
+        dest: /etc/vsftpd.conf
+      when: "'ftps' in group_names"
+
+    - name: Copy FTP configuration for mirror
+      ansible.builtin.copy:
+        src: mirror.vsftpd.conf
+        dest: /etc/vsftpd.conf
+      when: "'mirror' in group_names"
+
+    - name: Create users for mirror
+      when: "'mirror' in group_names"
+      block:
+        - name: Create user charles
+          ansible.builtin.user:
+            name: charles
+            password: "{{ charles_password }}"
+            shell: /bin/bash
+            state: present
+
+        - name: Create user laura
+          ansible.builtin.user:
+            name: laura
+            password: "{{ laura_password }}"
+            shell: /bin/bash
+            state: present
+
+        - name: Create home directory for charles
+          ansible.builtin.file:
+            path: /home/charles/ftp
+            state: directory
+            owner: charles
+            group: charles
+            mode: '0755'
+
+        - name: Create home directory for laura
+          ansible.builtin.file:
+            path: /home/laura/ftp
+            state: directory
+            owner: laura
+            group: laura
+            mode: '0755'
+
+    - name: Generate user-specific vsftpd configurations
+      ansible.builtin.template:
+        src: templates/vsftpd.conf.j2
+        dest: "/etc/vsftpd_{{ user }}.conf"
+        owner: root
+        group: root
+        mode: '0644'
+      loop:
+        - charles
+        - laura
+      loop_control:
+        loop_var: user
+
+    - name: Add FTP banner
+      ansible.builtin.lineinfile:
+        path: /etc/vsftpd.conf
+        line: 'ftpd_banner=Welcome to SRI FTP server'
+        state: present
+
+    - name: Restart vsftpd service
+      ansible.builtin.service:
+        name: vsftpd
+        state: restarted

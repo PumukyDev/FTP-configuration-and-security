@@ -1,0 +1,31 @@
+# Configuración básica
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+
+# Configuración de chroot
+chroot_local_user=YES
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+
+# Banner de bienvenida
+ftpd_banner=Welcome to SRI FTP server
+
+# Configuración de red
+listen=YES
+listen_address={{ listen_address | default('0.0.0.0') }}
+listen_ipv6={{ listen_ipv6 | default('NO') }}
+
+# Permisos de acceso
+local_umask=022
+local_root=/home/{{ user }}/ftp
+
+# Registro de actividad
+xferlog_enable=YES
+xferlog_file=/var/log/vsftpd.log
+
+# Configuración de rendimiento
+max_clients=200
+max_per_ip=5
+idle_session_timeout=600
+data_connection_timeout=120
