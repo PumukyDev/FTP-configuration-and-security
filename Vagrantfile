@@ -8,12 +8,6 @@ Vagrant.configure("2") do |config|
   config.vm.define "dns" do |dns|
   dns.vm.hostname = "ns.sri.ies"  
   dns.vm.network "private_network", ip: "192.168.57.10"
-  dns.vm.provision "shell", inline: <<-SHELL
-
-      # instalar paquetes
-      apt-get update
-      apt-get install -y bind9 bind9-utils bind9-doc
-    SHELL
   end
 
 config.vm.define "mirror" do |mirror|
