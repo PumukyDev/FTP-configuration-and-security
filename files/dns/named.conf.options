@@ -6,8 +6,6 @@ options {
         1.0.0.1; // Cloudflare DNS
     };
 
-    fordward only;
-
     dnssec-validation auto;
     
     listen-on { any; };

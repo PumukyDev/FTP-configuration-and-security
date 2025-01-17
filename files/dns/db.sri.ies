@@ -1,14 +1,14 @@
-;Zona sri.ies
+; Zona sri.ies
 $ORIGIN sri.ies.
-$TTL    604800
-          @       IN      SOA     ns.sri.ies. admin.sri.ies. (
-                              2         ; Serial
-                              604800    ; Refresh
-                              86400     ; Retry
-                              2419200   ; Expire
-                              604800 )  ; Negative Cache TTL
-          ;
-          @       IN      NS      ns.sri.ies.
-          ns      IN      A       192.168.57.10
-          mirror  IN      A       192.168.57.20
-          ftp     IN      A       192.168.57.30
+$TTL 604800
+@       IN      SOA     ns.sri.ies. admin.sri.ies. (
+                        2           ; Serial
+                        604800      ; Refresh
+                        86400       ; Retry
+                        2419200     ; Expire
+                        604800 )    ; Negative Cache TTL
+        ;
+@       IN      NS      ns.sri.ies.
+ns      IN      A       192.168.57.10
+mirror  IN      A       192.168.57.20
+ftp     IN      A       192.168.57.30
