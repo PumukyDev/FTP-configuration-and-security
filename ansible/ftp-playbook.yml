@@ -22,6 +22,11 @@
         group: ftp
         mode: '0555'
 
+    - name: Copy banner file
+      ansible.builtin.copy:
+        src: ../files/ftp/provisional2_message.txt
+        dest: /etc/vsftpd.banner
+
     - name: Restart vsftpd service
       ansible.builtin.service:
         name: vsftpd
