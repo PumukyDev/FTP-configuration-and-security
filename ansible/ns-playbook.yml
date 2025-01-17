@@ -15,10 +15,11 @@
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
       loop: 
-        - { src: "../files/dns/named.conf.local", dest: "/etc/bind/named.conf.local" }
-        - { src: "../files/dns/named.conf.options", dest: "/etc/bind/named.conf.options" }
-        - { src: "../files/dns/db.sri.ies", dest: "/etc/bind/db.sri.ies" }
-        - { src: "../files/dns/named", dest: "/etc/default/named" }
+        - { src: "../files/dns/named.conf.local", dest: "/etc/bind/" }
+        - { src: "../files/dns/named.conf.options", dest: "/etc/bind/" }
+        - { src: "../files/dns/db.sri.ies", dest: "/etc/bind/" }
+        - { src: "dns/db.57.168.192", dest: "/etc/bind/" }
+        - { src: "../files/dns/named", dest: "/etc/default/" }
 
     - name: Set permissions for Bind9
       file:
@@ -31,6 +32,30 @@
         - /etc/bind/named.conf.options
         - /etc/bind/db.sri.ies
         - /etc/default/named
+
+    - name: Update serial in db.sri.ies
+      replace:
+        path: /etc/bind/db.sri.ies
+        regexp: '(\d+)\s*;\s*Serial'
+        replace: "{{ lookup('pipe', 'date +%Y%m%d%H') }} ; Serial"
+
+    - name: Restart Bind9 service
+      service:
+        name: bind9
+        state: restarted
+
+    - name: Validate DNS configuration
+      command: named-checkconf
+      register: conf_check
+      failed_when: conf_check.rc != 0
+
+    - name: Validate zone file
+      command: named-checkzone sri.ies /etc/bind/db.sri.ies
+      register: zone_check
+      failed_when: zone_check.rc != 0
+
+    - name: Validate Bind9 configuration
+      command: named-checkconf
 
     - name: Restart bind9
       service:
