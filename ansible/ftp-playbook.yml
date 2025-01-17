@@ -1,30 +1,38 @@
 ---
-- name: Install FTP service
-  hosts: ftps
-  become: True
-  tasks:
-    - name: Install packages
-      ansible.builtin.apt:
-        update_cache: True
-        pkg:
-          - ftp
-          - vsftpd
-
-- name: Configure FTP service 
+- name: Configure FTP service
   hosts: ftp
   become: True
   tasks:
-    - name: Copy ftp.vsftpd.conf
-      copy:
+    - name: Install vsftpd package
+      ansible.builtin.apt:
+        name: vsftpd
+        state: present
+        update_cache: yes
+
+    - name: Copy vsftpd configuration file
+      ansible.builtin.copy:
         src: ../files/ftp/ftp.vsftpd.conf
         dest: /etc/vsftpd.conf
+
+    - name: Create anonymous FTP root directory
+      ansible.builtin.file:
+        path: /srv/ftp
+        state: directory
+        owner: ftp
+        group: ftp
+        mode: '0555'
+
+    - name: Restart vsftpd service
+      ansible.builtin.service:
+        name: vsftpd
+        state: restarted
 
 - name: Configure FTP service mirror
   hosts: mirror
   become: True
   tasks:
     - name: Copy mirror.vsftpd.conf
-      copy:
+      ansible.builtin.copy:
         src: ../files/ftp/mirror.vsftpd.conf
         dest: /etc/vsftpd.conf
 
