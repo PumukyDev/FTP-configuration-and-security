@@ -18,7 +18,7 @@
         - { src: "../files/dns/named.conf.local", dest: "/etc/bind/" }
         - { src: "../files/dns/named.conf.options", dest: "/etc/bind/" }
         - { src: "../files/dns/db.sri.ies", dest: "/etc/bind/" }
-        - { src: "dns/db.57.168.192", dest: "/etc/bind/" }
+        - { src: "../files/dns/db.192.168.57", dest: "/etc/bind/" }
         - { src: "../files/dns/named", dest: "/etc/default/" }
 
     - name: Set permissions for Bind9
