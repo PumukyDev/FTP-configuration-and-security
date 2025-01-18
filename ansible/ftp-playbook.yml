@@ -1,6 +1,6 @@
 ---
 - name: Configure FTP service
-  hosts: ftp
+  hosts: ftps
   become: True
   tasks:
     - name: Install vsftpd package
@@ -9,7 +9,11 @@
         state: present
         update_cache: yes
 
-    - name: Copy vsftpd configuration file
+- name: Configure FTP service in ftp server
+  hosts: ftp
+  become: True
+  tasks:
+    - name: Copy ftp.vsftpd configuration file
       ansible.builtin.copy:
         src: ../files/ftp/ftp.vsftpd.conf
         dest: /etc/vsftpd.conf
@@ -27,54 +31,24 @@
         src: ../files/ftp/provisional2_message.txt
         dest: /etc/vsftpd.banner
 
-    - name: Restart vsftpd service
-      ansible.builtin.service:
-        name: vsftpd
-        state: restarted
-
-- name: Configure FTP service mirror
+- name: Configure FTP service in mirror server
   hosts: mirror
   become: True
-  tasks:
-    - name: Copy mirror.vsftpd.conf
-      ansible.builtin.copy:
-        src: ../files/ftp/mirror.vsftpd.conf
-        dest: /etc/vsftpd.conf
-
-- name: Configure users for mirror
-  hosts: mirror
-  become: true
   vars:
     charles_password: "{{ '1234' | password_hash('sha512') }}"
     laura_password: "{{ '1234' | password_hash('sha512') }}"
   tasks:
-    - name: Install required packages
-      ansible.builtin.apt:
-        update_cache: true
-        name:
-          - vsftpd
-        state: present
-
-    - name: Copy FTP configuration for ftps
-      ansible.builtin.copy:
-        src: ../files/ftp/ftp.vsftpd.conf
-        dest: /etc/vsftpd.conf
-      when: "'ftps' in group_names"
-
-    - name: Copy FTP configuration for mirror
+    - name: Copy ftp.vsftpd configuration file
       ansible.builtin.copy:
         src: ../files/ftp/mirror.vsftpd.conf
         dest: /etc/vsftpd.conf
-      when: "'mirror' in group_names"
 
     - name: Copy chroot_list for mirror
       ansible.builtin.copy:
         src: ../files/ftp/vsftpd.chroot_list
         dest: /etc/vsftpd.chroot_list
-      when: "'mirror' in group_names"
 
     - name: Create users for mirror
-      when: "'mirror' in group_names"
       block:
         - name: Create user charles
           ansible.builtin.user:
@@ -106,25 +80,10 @@
             group: laura
             mode: '0755'
 
-    - name: Generate user-specific vsftpd configurations
-      ansible.builtin.template:
-        src: ../templates/vsftpd.conf.j2
-        dest: "/etc/vsftpd_{{ user }}.conf"
-        owner: root
-        group: root
-        mode: '0644'
-      loop:
-        - charles
-        - laura
-      loop_control:
-        loop_var: user
-
-    - name: Add FTP banner
-      ansible.builtin.lineinfile:
-        path: /etc/vsftpd.conf
-        line: 'ftpd_banner=Welcome to SRI FTP server'
-        state: present
-
+- name: Restart vsftpd service
+  hosts: ftps
+  become: True
+  tasks:
     - name: Restart vsftpd service
       ansible.builtin.service:
         name: vsftpd
