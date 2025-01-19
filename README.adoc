@@ -1,0 +1,13 @@
+= FTP-configuration-and-security
+
+FTP (File Transfer Protocol) is a standard network protocol used to transfer files between a client and a server on a computer network. It is useful for sharing files, backing up data, and managing website files.
+
+Here you will learn how to configure FTP servers for anonymous and local user authentication, and implement security measures through encryption.
+
+You can see the requirements for the activity link:ftp-anonymous-and-local-users.pdf[here]
+
+== This task has been completed by:
+
+* Adrián Bertos Gómez
+* Álvaro García Márquez
+* Jesús Martínez Valero
