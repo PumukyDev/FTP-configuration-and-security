@@ -6,6 +6,60 @@ Here you will learn how to configure FTP servers for anonymous and local user au
 
 You can see the requirements for the activity link:ftp-anonymous-and-local-users.pdf[here]
 
+== Adri
+
+=== 1. Install FTP server software on the assigned machine.
+
+We are installing the vsftpd package using the ansible apt module.
+
+```yaml
+- name: Install vsftpd package
+    ansible.builtin.apt:
+    name: vsftpd
+    state: present
+    update_cache: yes
+```
+
+
+=== 2. Configure the FTP server to allow anonymous connections.
+
+
+
+=== 3. Set secure access permissions for shared directories.
+
+
+
+=== 4. Local users are not allowed.
+
+
+
+=== 5. Anonymous users has NO write permissions.
+
+
+
+=== 6. Anonymous users are not asked for an anonymous password.
+
+
+
+=== 7. Data connection timeout will be 30 secs.
+
+
+
+=== 8. Limit max data transfer bandwidth to 5KB/s
+
+
+
+=== 9. The server shows a banner "Welcome to SRI FTP anonymous server"
+
+
+
+=== 10. The server shows an ascii art file in the land directory.
+
+
+
+=== 11. Test the configuration with two clients. Test passive and active connection mode (pftp for
+passive connection).
+
 == This task has been completed by:
 
 * Adrián Bertos Gómez
