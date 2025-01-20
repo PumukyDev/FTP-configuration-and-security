@@ -112,6 +112,11 @@
             csr_path: /etc/ssl/private/ssl-sign.csr
             provider: selfsigned
 
+    - name: Copy the resolv.conf
+      ansible.builtin.copy:
+        src: "../resolv.conf"
+        dest: /etc/
+
 - name: Restart vsftpd service
   hosts: ftps
   become: True
