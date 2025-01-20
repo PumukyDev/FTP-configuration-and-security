@@ -1,6 +1,6 @@
 ---
 - name: Configure FTP service
-  hosts: ftps
+  hosts: ftp_servers
   become: True
   tasks:
     - name: Install vsftpd package
@@ -113,7 +113,7 @@
             provider: selfsigned
 
 - name: Restart vsftpd service
-  hosts: ftps
+  hosts: ftp_servers
   become: True
   tasks:
     - name: Restart vsftpd service
