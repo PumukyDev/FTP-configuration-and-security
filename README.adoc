@@ -11,3 +11,68 @@ You can see the requirements for the activity link:ftp-anonymous-and-local-users
 * Adrián Bertos Gómez
 * Álvaro García Márquez
 * Jesús Martínez Valero
+
+
+
+``
+JESUS
+``
+
+I have created the configuration of the mirror machine with an ansible archive.
+
+Now I'm going to explain step by step all the ansible features asociated with the mirror ftp machine.
+
+Firstly I have to talk about the inventory. We have created a group of the two ftp servers called FTPS. We install the same software to both machines at the same time.
+
+```
+
+ftps:
+  hosts:
+    mirror:
+      ansible_ssh_port: 2200
+    ftp:
+      ansible_ssh_port: 2300
+
+```
+Now I'm going to explain all the features of the mirror ftp server inside of the ftp-playbook.yml.
+
+We can see how the ftp service is installed in both machines.
+
+```
+
+---
+- name: Configure FTP service
+  hosts: ftps
+  become: True
+  tasks:
+    - name: Install vsftpd package
+      ansible.builtin.apt:
+        name: vsftpd
+        state: present
+        update_cache: yes
+
+```
+
+This is the beginnig of the mirror specific configuration.
+In the next image, we can see the configuration of the two variables with the password and the path of the configuration file. Also we can see the path of the destination folder where the conf file is going to install.
+
+```
+
+- name: Configure FTP service in mirror server
+  hosts: mirror
+  become: True
+  vars:
+    charles_password: "{{ '1234' | password_hash('sha512') }}"
+    laura_password: "{{ '1234' | password_hash('sha512') }}"
+  tasks:
+    - name: Copy ftp.vsftpd configuration file
+      ansible.builtin.copy:
+        src: ../files/ftp/mirror.vsftpd.conf
+        dest: /etc/vsftpd.conf
+
+```
+
+
+
+
+
