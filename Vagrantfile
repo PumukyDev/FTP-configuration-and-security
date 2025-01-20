@@ -3,7 +3,7 @@ Vagrant.configure("2") do |config|
   config.ssh.insert_key = false
 
   ansible_config_file = "./ansible.cfg"
-  ansible_inventory_path = "ansible/inventory.yml"
+  ansible_inventory_path = "./ansible/inventory/vagrant_inventory.yml"
 
   config.vm.define "dns" do |dns|
     dns.vm.hostname = "ns.sri.ies"

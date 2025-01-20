@@ -18,6 +18,12 @@
         src: ../files/ftp/ftp.vsftpd.conf
         dest: /etc/vsftpd.conf
 
+    - name: Ensure ftp user exists
+      ansible.builtin.user:
+        name: ftp
+        shell: /usr/sbin/nologin
+        state: present
+
     - name: Create anonymous FTP root directory
       ansible.builtin.file:
         path: /srv/ftp
