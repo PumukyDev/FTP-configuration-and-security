@@ -37,6 +37,11 @@
         src: ../files/ftp/provisional2_message.txt
         dest: /etc/vsftpd.banner
 
+    - name: Copy the resolv.conf
+      ansible.builtin.copy:
+        src: "../resolv.conf"
+        dest: /etc/
+
 - name: Configure FTP service in mirror server
   hosts: mirror
   become: True
