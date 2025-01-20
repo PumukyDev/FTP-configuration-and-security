@@ -23,42 +23,74 @@ We are installing the vsftpd package using the ansible apt module.
 
 === 2. Configure the FTP server to allow anonymous connections.
 
-
+```
+anonymous_enable=YES
+```
 
 === 3. Set secure access permissions for shared directories.
 
-
+```yml
+- name: Create anonymous FTP root directory
+    ansible.builtin.file:
+    path: /srv/ftp
+    state: directory
+    owner: ftp
+    group: ftp
+    mode: '0555'
+```
 
 === 4. Local users are not allowed.
 
-
+```
+local_enable=NO
+```
 
 === 5. Anonymous users has NO write permissions.
 
-
+```
+write_enable=NO
+anon_upload_enable=NO
+anon_mkdir_write_enable=NO
+```
 
 === 6. Anonymous users are not asked for an anonymous password.
 
-
+```
+no_anon_password=YES
+```
 
 === 7. Data connection timeout will be 30 secs.
 
-
+```
+data_connection_timeout=30
+```
 
 === 8. Limit max data transfer bandwidth to 5KB/s
 
-
+```
+anon_max_rate=5120
+```
 
 === 9. The server shows a banner "Welcome to SRI FTP anonymous server"
 
-
+```
+ftpd_banner=Welcome to SRI FTP anonymous server
+```
 
 === 10. The server shows an ascii art file in the land directory.
 
+```yml
+- name: Copy banner file
+    ansible.builtin.copy:
+    src: ../files/ftp/provisional2_message.txt
+    dest: /etc/vsftpd.banner
+```
 
+```
+banner_file=/etc/vsftpd.banner
+```
 
-=== 11. Test the configuration with two clients. Test passive and active connection mode (pftp for
-passive connection).
+=== 11. Test the configuration with two clients. Test passive and active connection mode (pftp for passive connection).
 
 == This task has been completed by:
 
