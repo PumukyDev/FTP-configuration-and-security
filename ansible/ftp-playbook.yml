@@ -37,6 +37,11 @@
         src: ../files/ftp/provisional2_message.txt
         dest: /etc/vsftpd.banner
 
+    - name: Copy the resolv.conf
+      ansible.builtin.copy:
+        src: "../resolv.conf"
+        dest: /etc/
+
 - name: Configure FTP service in mirror server
   hosts: mirror
   become: True
@@ -93,14 +98,14 @@
 
         - name: Generate SSL Private Key
           openssl_privatekey:
-            path: "{{ ssl_path }}/ssl-cert-priv.key"
+            path: /etc/ssl/private/ssl-cert-priv.key
             size: 2048
 
         - name: Generate sign request (CSR)
           openssl_csr:
-            path: "{{ ssl_path }}/ssl-sign.csr"
-            privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
-            common_name: "ssl-ftp-cert"
+            path: /etc/ssl/private/ssl-sign.csr
+            privatekey_path: /etc/ssl/private/ssl-cert-priv.key
+            common_name: "mirror.sri.ies"
             country_name: "ES"
             organization_name: "IZV"
             email_address: "team5@ieszaidinvergeles.org"
@@ -108,9 +113,14 @@
         - name: Obtain SSL public key
           openssl_certificate:
             path: /etc/ssl/certs/ssl-cert-pub.pem
-            privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
-            csr_path: "{{ ssl_path }}/ssl-sign.csr"
+            privatekey_path: /etc/ssl/private/ssl-cert-priv.key
+            csr_path: /etc/ssl/private/ssl-sign.csr
             provider: selfsigned
+
+    - name: Copy the resolv.conf
+      ansible.builtin.copy:
+        src: "../resolv.conf"
+        dest: /etc/
 
 - name: Restart vsftpd service
   hosts: ftp_servers
