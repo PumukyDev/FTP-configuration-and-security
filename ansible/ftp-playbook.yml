@@ -1,6 +1,6 @@
 ---
 - name: Configure FTP service
-  hosts: ftps
+  hosts: ftp_servers
   become: True
   tasks:
     - name: Install vsftpd package
@@ -98,13 +98,13 @@
 
         - name: Generate SSL Private Key
           openssl_privatekey:
-            path: /etc/ssl/private/ssl-cert-priv.key
+            path: "{{ ssl_path }}/ssl-cert-priv.key"
             size: 2048
 
         - name: Generate sign request (CSR)
           openssl_csr:
-            path: /etc/ssl/private/ssl-sign.csr
-            privatekey_path: /etc/ssl/private/ssl-cert-priv.key
+            path: "{{ ssl_path }}/ssl-sign.csr"
+            privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
             common_name: "ssl-ftp-cert"
             country_name: "ES"
             organization_name: "IZV"
@@ -113,8 +113,8 @@
         - name: Obtain SSL public key
           openssl_certificate:
             path: /etc/ssl/certs/ssl-cert-pub.pem
-            privatekey_path: /etc/ssl/private/ssl-cert-priv.key
-            csr_path: /etc/ssl/private/ssl-sign.csr
+            privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
+            csr_path: "{{ ssl_path }}/ssl-sign.csr"
             provider: selfsigned
 
     - name: Copy the resolv.conf
@@ -123,7 +123,7 @@
         dest: /etc/
 
 - name: Restart vsftpd service
-  hosts: ftps
+  hosts: ftp_servers
   become: True
   tasks:
     - name: Restart vsftpd service
