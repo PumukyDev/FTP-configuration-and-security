@@ -163,14 +163,14 @@ As you can see we are conneting correctly with active mode.
 image::assets/active2.jpg[Testing Active Mode]
 
 
-== JESUS
+== Jesús
 
 
-== Configuration of the FTP Server with Local Users
+== 1.Configuration of the FTP Server with Local Users
 
 We have created the configuration of the mirror machine using an Ansible archive. Below is a step-by-step explanation of all the Ansible features associated with the mirror FTP machine.
 
-== Inventory Configuration
+== 2.Inventory Configuration
 
 We created a group for the two FTP servers called `FTPS`. This allows us to install the same software on both machines simultaneously. The inventory file looks like this:
 
@@ -187,7 +187,7 @@ ftps:
 ----
 
 
-== FTP Service Configuration
+== 3.FTP Service Configuration
 
 Below is the configuration defined in the `ftp-playbook.yml` file. This playbook ensures the FTP service is installed on both machines.
 
@@ -205,11 +205,11 @@ Below is the configuration defined in the `ftp-playbook.yml` file. This playbook
         update_cache: yes
 ----
 
-=== Mirror-Specific Configuration
+=== 4.Mirror-Specific Configuration
 
 This section details the configuration of the mirror FTP server.
 
-==== Variables for Passwords and Configuration Paths
+==== 5.Variables for Passwords and Configuration Paths
 
 The following variables define the passwords for the users and the path for the configuration file. The configuration file will be copied to the correct destination folder.
 
@@ -228,7 +228,7 @@ The following variables define the passwords for the users and the path for the 
         dest: /etc/vsftpd.conf
 ----
 
-==== Chroot List Configuration
+==== 6.Chroot List Configuration
 
 The following configuration defines the chroot file path:
 
@@ -240,7 +240,7 @@ The following configuration defines the chroot file path:
     dest: /etc/vsftpd.chroot_list
 ----
 
-==== User Configuration
+==== 7.User Configuration
 
 The users `charles` and `laura` are created with their respective configurations.
 
@@ -270,7 +270,7 @@ The users `charles` and `laura` are created with their respective configurations
     state: present
 ----
 
-==== Directory Configuration for Users
+==== 8.Directory Configuration for Users
 
 The directories for `charles` and `laura` are created with appropriate ownership and permissions:
 
@@ -293,7 +293,7 @@ The directories for `charles` and `laura` are created with appropriate ownership
     mode: '0755'
 ----
 
-==== Service Restart Configuration
+==== 9.Service Restart Configuration
 
 At the end of the playbook, the FTP service is restarted to apply all changes:
 
@@ -318,7 +318,7 @@ The `chroot_list` file specifies the user that is not restricted to their home d
 laura
 ----
 
-== FTP Server Configuration File
+== 10.FTP Server Configuration File
 
 Below is the complete configuration for the FTP server, including settings for authentication, chroot, SSL, and user restrictions:
 
@@ -406,9 +406,10 @@ Now I'm going to explain the problems I had trying to work at home.
 - **Create Bootable USB**:  
   - Done via Rufus on Windows.  
 - **Install Packages on Ubuntu**:  
-  ```bash
+----
   sudo apt update && sudo apt install virtualbox vagrant ansible
-  ```
+----
+
 
 ---
 
@@ -421,27 +422,30 @@ Now I'm going to explain the problems I had trying to work at home.
 
 **2. First Attempt**  
 - **Command Used**:  
-  ```bash
+----
   sudo apt install virtualbox
-  ```  
+----
+
+
 - **Result**: Error indicating the version in the default repositories was outdated or incompatible with the current kernel.  
 - **Additional Action**: Added the official Oracle repository for VirtualBox:  
-  ```bash
+----
   sudo add-apt-repository "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
   sudo apt update
-  ```
+----
+
 
 **3. Second Attempt**  
 - **Command Used After Adding the Repository**:  
-  ```bash
+----
   sudo apt install virtualbox-6.1
-  ```  
+---- 
 - **Result**: Dependency errors (e.g., missing `dkms` for kernel module compilation).  
 - **Additional Actions**: Installed required dependencies:  
-  ```bash
+----
   sudo apt install dkms build-essential linux-headers-$(uname -r)
   sudo apt install virtualbox-6.1
-  ```
+----
 
 **4. Issues with Secure Boot**  
 - **Problem**: Errors during installation related to kernel module signing due to Secure Boot.  
@@ -461,14 +465,14 @@ Now I'm going to explain the problems I had trying to work at home.
 
 **Commands for Future Reference**  
 - **Add Official VirtualBox Repository**:  
-  ```bash
+----
   sudo add-apt-repository "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
   sudo apt update
-  ```  
+---- 
 - **Install VirtualBox and Dependencies**:  
-  ```bash
+----
   sudo apt install dkms build-essential linux-headers-$(uname -r) virtualbox-6.1
-  ```
+----
 
 ---
 
@@ -481,40 +485,39 @@ Now I'm going to explain the problems I had trying to work at home.
 
 **2. First Attempt**  
 - **Command Used**:  
-  ```bash
+----
   sudo apt install python3-passlib
-  ```  
+---- 
 - **Result**: Error indicating the package could not be located, likely due to:  
   - Outdated repositories.  
   - Missing configuration for required repositories.  
 - **Additional Action**: Verified internet connection and updated repositories:  
-  ```bash
+----
   sudo apt update
-  ```
+----
 
 **3. Second Attempt**  
 - **Command with pip**:  
-  ```bash
+----
   pip3 install passlib
-  ```  
+---- 
 - **Result**: Permission errors for global installation.  
 - **Proposed Solution**: Run the command with superuser privileges:  
-  ```bash
-  sudo pip3 install passlib
-  ```
+----
+----
 
 **4. Virtual Environment Creation**  
 - **Commands Used**:  
-  ```bash
+----
   python3 -m venv env
   source env/bin/activate
   pip install passlib
-  ```  
+---- 
 - **Result**: Created virtual environment, but `pip install passlib` failed due to an outdated `pip`.  
 - **Additional Action**: Updated `pip` in the virtual environment:  
-  ```bash
+----
   pip install --upgrade pip
-  ```  
+---- 
   Successfully installed `passlib` afterward.  
 
 **5. Final Observations**  
@@ -532,15 +535,15 @@ Now I'm going to explain the problems I had trying to work at home.
 
 **Command for Future Reference**  
 - **Install python3-passlib with apt**:  
-  ```bash
+----
   sudo apt update && sudo apt install python3-passlib
-  ```  
+---- 
 - **Using a Virtual Environment**:  
-  ```bash
+----
   python3 -m venv env
   source env/bin/activate
   pip install passlib
-  ```
+----
   
 == 4.3. Implementation of Encryption (SSL/TLS)
 
