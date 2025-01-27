@@ -37,6 +37,11 @@
         src: ../files/ftp/provisional2_message.txt
         dest: /etc/vsftpd.banner
 
+    - name: Copy the resolv.conf
+      ansible.builtin.copy:
+        src: "../resolv.conf"
+        dest: /etc/
+
 - name: Configure FTP service in mirror server
   hosts: mirror
   become: True
@@ -111,6 +116,11 @@
             privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
             csr_path: "{{ ssl_path }}/ssl-sign.csr"
             provider: selfsigned
+
+    - name: Copy the resolv.conf
+      ansible.builtin.copy:
+        src: "../resolv.conf"
+        dest: /etc/
 
 - name: Restart vsftpd service
   hosts: ftp_servers

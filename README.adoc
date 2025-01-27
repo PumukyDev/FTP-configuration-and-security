@@ -215,6 +215,249 @@ Overall, SSL/TLS encryption provides a secure environment for file transfer, red
 
 By enforcing SSL/TLS for all connections, we can ensure that both anonymous and local users transmit data securely, which is vital for maintaining the confidentiality and integrity of transferred files.
 
+== Álvaro
+
+== 4.4. Configuration of DNS server
+
+The **DNS (Domain Name System)** is a system responsible for translating human-readable domain names, such as `ns.sri.ies`, into machine-readable IP addresses, and vice versa. This system is fundamental for network communication, as it allows users and applications to connect to services without needing to remember numerical IP addresses.
+
+In this task, we configured a DNS server to handle forward and reverse resolution for the `sri.ies` domain. This includes defining the records for key services within the domain (`ns.sri.ies`, `mirror.sri.ies`, `ftp.sri.ies`) and enabling external queries to be forwarded to a public DNS server. Below, I explain in detail the steps followed to complete this setup.
+
+=== 1. Install a third virtual machine with a FTP server with authority on the domain sri.ies. This machine is ns.sri.ies.
+
+This machine is ns.sri.ies.
+
+The first step was to install and configure a virtual machine designated as `ns.sri.ies`. This machine serves two purposes:
+  - It acts as the primary DNS server for the `sri.ies` domain.
+  - It provides authority over the `sri.ies` domain, meaning it is responsible for responding to DNS queries about names and IP addresses within this domain.
+
+[source,ruby]
+----
+config.vm.define "dns" do |dns|
+    dns.vm.hostname = "ns.sri.ies"
+    dns.vm.network "private_network", ip: "192.168.57.10"
+    dns.vm.network "forwarded_port", guest: 22, host: 2100
+end
+----
+
+To achieve this:
+  - I installed the BIND9 DNS server software on the virtual machine.
+
+  [source,yaml]
+  ----
+  - name: Install bind9
+    apt:
+      name: 
+        - bind9
+        - bind9utils
+        - bind9-doc
+      update_cache: yes
+  ----
+
+  - I configured the `named.conf.local` file to define the forward and reverse zones for the domain `sri.ies`. The forward zone resolves domain names to IP addresses, and the reverse zone resolves IP addresses back to domain names.
+
+  [source,bash]
+  ----
+  zone "sri.ies" {
+              type master;
+              file "/etc/bind/db.sri.ies";
+          };
+  ----
+
+  - Finally, I created the zone files (`/etc/bind/db.sri.ies` for forward resolution and `/etc/bind/db.192.168.57` for reverse resolution) to include the necessary DNS records.
+
+=== 2. It has record for mirror.sri.ies that points to the anonymous FTP server and ftp.sri.ies for the local user's FTP server.
+
+Next, I configured DNS records to define the key services within the `sri.ies` domain:
+  - **Forward resolution (A records):**
+	- `ns.sri.ies` -> `192.168.57.10`
+	- `mirror.sri.ies` -> `192.168.57.20` (anonymous FTP server)
+	- `ftp.sri.ies` -> `192.168.57.30` (FTP server for local users)
+  - **Reverse resolution (PTR records):**
+	- `192.168.57.10` -> `ns.sri.ies`
+	- `192.168.57.20` -> `mirror.sri.ies`
+	- `192.168.57.30` -> `ftp.sri.ies`
+
+The forward records are stored in the forward zone file (`db.sri.ies`), while the reverse records are in the reverse zone file (`db.192.168.57`).
+
+These records allow devices in the network to resolve domain names to their corresponding IP addresses and vice versa, ensuring proper connectivity.
+
+
+  ==== db.sri.ies
+
+  [source,bash]
+  ----
+  ; Zona sri.ies
+  $ORIGIN sri.ies.
+  $TTL 604800
+  @       IN      SOA     ns.sri.ies. admin.sri.ies. (
+                          2           ; Serial
+                          604800      ; Refresh
+                          86400       ; Retry
+                          2419200     ; Expire
+                          604800 )    ; Negative Cache TTL
+          ;
+  @       IN      NS      ns.sri.ies.
+  ns      IN      A       192.168.57.10
+  mirror  IN      A       192.168.57.20
+  ftp     IN      A       192.168.57.30
+  ----
+
+==== db.192.168.57
+
+  [source,bash]
+  ----
+  ; Zona inversa para 192.168.57.0/24
+  $TTL    604800
+  @       IN      SOA     ns.sri.ies. admin.sri.ies. (
+                          2           ; Serial
+                          604800      ; Refresh
+                          86400       ; Retry
+                          2419200     ; Expire
+                          604800 )    ; Negative Cache TTL
+          ;
+            @       IN      NS      ns.sri.ies.
+  10        IN      PTR     ns.sri.ies.
+  20        IN      PTR     mirror.sri.ies.
+  30        IN      PTR     ftp.sri.ies.
+  ----
+
+=== 3. Redirect queries for other domains to Cloudfare's server 1.1.1.1
+
+To ensure the DNS server could resolve domain names outside the `sri.ies` domain, I configured DNS forwarding in the `named.conf.options` file. This involved specifying Cloudflare's public DNS server (`1.1.1.1`) as the forwarder for any queries not related to the `sri.ies` domain.
+
+[source,bash]
+----
+options {
+	directory "/var/cache/bind";
+
+    forwarders {
+	    1.1.1.1; // Cloudflare DNS
+        1.0.0.1; // Cloudflare DNS
+    };
+
+    dnssec-validation auto;
+    
+    listen-on { any; };
+    listen-on-v6 { any; };
+};
+----
+
+This step ensures that devices within the network can access both internal and external services seamlessly. For example:
+  - Internal query: Resolving `ftp.sri.ies` is handled by the local DNS server.
+  - External query: Resolving `www.google.com` is forwarded to Cloudflare's DNS server.
+
+
+=== 4. Both FTP server has ns.sri.ies as name server.
+
+Finally, I configured both FTP servers (`mirror.sri.ies` and `ftp.sri.ies`) to use `ns.sri.ies` as their DNS name server. This ensures that both servers can:
+  - Resolve domain names within the `sri.ies` domain, such as `ftp.sri.ies` or `mirror.sri.ies`.
+  - Forward external queries to the Cloudflare DNS server through `ns.sri.ies`.
+
+  ==== resolv.conf
+  [source, bash]
+  ----
+  nameserver 192.168.57.10
+  search sri.ies
+  ----
+
+  ==== mirror.sri.ies
+  [source, bash]
+  ----
+  - name: Copy the resolv.conf
+    ansible.builtin.copy:
+      src: "../resolv.conf"
+      dest: /etc/
+  ----
+
+  ==== ftp.sri.ies
+  [source, bash]
+  ----
+  - name: Copy the resolv.conf
+    ansible.builtin.copy:
+      src: "../resolv.conf"
+      dest: /etc/
+  ----
+
+This configuration was validated by testing the resolution of both forward and reverse records using tools like `dig` and a custom Bash script (`dns-test.sh`). The script verified that:
+  - Forward queries (e.g., `dig ftp.sri.ies`) return the correct IP addresses.
+  - Reverse queries (e.g., `dig -x 192.168.57.30`) return the correct domain names.
+
+  ==== dns-test.sh
+  [source,bash]
+  ----
+  set -euo pipefail
+
+  function resolve () {
+      dig $nameserver +short $@
+  }
+
+  nameserver=@$1
+
+  resolve ns.sri.ies
+  resolve ftp.sri.ies
+  resolve mirror.sri.ies
+
+  resolve -x 192.168.57.10
+  resolve -x 192.168.57.20
+  resolve -x 192.168.57.30
+  ----
+
+=== Extra information
+
+In order to set the configuration in the dns machine I copy the files into it with the ansible provision
+
+==== ns-playbook.yaml
+
+[source,yaml]
+----
+- name: Copy the DNS config
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop: 
+    - { src: "{{ dns_path }}/named.conf.local", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/named.conf.options", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/db.sri.ies", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/db.192.168.57", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/named", dest: "/etc/default/" }
+    - { src: "../resolv.conf", dest: "/etc/"}
+----
+
+We also need to validate and restart bind9 services
+
+==== ns-playbook.yaml
+[source,yaml]
+----
+- name: Validate Bind9 configuration
+  command: named-checkconf
+
+- name: Restart bind9
+  service:
+    name: bind9
+    state: restarted
+----
+
+And also validate the DNS configuration and the zone file
+
+==== ns-playbook.yaml
+[source,yaml]
+----
+- name: Validate DNS configuration
+command: named-checkconf
+register: conf_check
+failed_when: conf_check.rc != 0
+
+- name: Validate zone file
+command: named-checkzone sri.ies /etc/bind/db.sri.ies
+register: zone_check
+failed_when: zone_check.rc != 0
+----
+
+
+With this setup, the DNS server successfully manages all domain-related queries for the `sri.ies` network while also providing access to external resources.
+
+
 == This task has been completed by:
 
 * Adrián Bertos Gómez

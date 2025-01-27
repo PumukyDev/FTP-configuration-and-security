@@ -20,6 +20,7 @@
         - { src: "{{ dns_path }}/db.sri.ies", dest: "/etc/bind/" }
         - { src: "{{ dns_path }}/db.192.168.57", dest: "/etc/bind/" }
         - { src: "{{ dns_path }}/named", dest: "/etc/default/" }
+        - { src: "../resolv.conf", dest: "/etc/"}
 
     - name: Set permissions for Bind9
       file:
