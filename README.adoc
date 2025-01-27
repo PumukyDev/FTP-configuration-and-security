@@ -1,96 +1,465 @@
-= FTP-configuration-and-security
+= FTP Configuration and Security
 
-FTP (File Transfer Protocol) is a standard network protocol used to transfer files between a client and a server on a computer network. It is useful for sharing files, backing up data, and managing website files.
+FTP (File Transfer Protocol) is a standard network protocol used to transfer files between a client and a server on a computer network. It is widely used for sharing files, backing up data, and managing website files. In this guide, you will learn how to configure an FTP server for both anonymous and local user authentication, as well as implement security measures such as encryption and access controls.
 
-Here you will learn how to configure FTP servers for anonymous and local user authentication, and implement security measures through encryption.
-
-You can see the requirements for the activity link:ftp-anonymous-and-local-users.pdf[here]
+For more information on the activity requirements, you can view the detailed document link: ftp-anonymous-and-local-users.pdf[here].
 
 == Adri
 
-=== 1. Install FTP server software on the assigned machine.
+=== 1. Install FTP server software on the assigned machine
 
-We are installing the vsftpd package using the ansible apt module.
+The first step is to install the `vsftpd` package, which is a secure and fast FTP server. We will use Ansible's `apt` module to ensure the package is installed and up-to-date.
 
-```yaml
+[source,yaml]
+----
 - name: Install vsftpd package
-    ansible.builtin.apt:
+  ansible.builtin.apt:
     name: vsftpd
     state: present
     update_cache: yes
-```
+----
+* This ensures that the server software is installed and ready for configuration.
 
+=== 2. Configure the FTP server to allow anonymous connections
 
-=== 2. Configure the FTP server to allow anonymous connections.
+To allow unauthenticated users to access the FTP server, we need to enable anonymous access in the `vsftpd.conf` configuration file. This is often required for public file sharing but should be carefully secured.
 
-```
+[source,ini]
+----
 anonymous_enable=YES
-```
+----
+* Enabling anonymous access allows users to connect without providing credentials, which is useful for providing public file access.
 
-=== 3. Set secure access permissions for shared directories.
+=== 3. Set secure access permissions for shared directories
 
-```yml
+We need to create a root directory for anonymous FTP access, ensuring that it is restricted to read-only access. This step ensures the security of the shared data.
+
+[source,yaml]
+----
 - name: Create anonymous FTP root directory
-    ansible.builtin.file:
+  ansible.builtin.file:
     path: /srv/ftp
     state: directory
     owner: ftp
     group: ftp
     mode: '0555'
-```
+----
+* The directory `/srv/ftp` is created with read-only permissions (`0555`), ensuring that anonymous users can only download files but cannot modify or delete anything.
 
-=== 4. Local users are not allowed.
+=== 4. Local users are not allowed
 
-```
+If you want to prevent local users from logging into the FTP server, you can disable local user login. This is useful for securing the server if you only want to allow anonymous access.
+
+[source,ini]
+----
 local_enable=NO
-```
+----
+* Disabling local user login (`local_enable=NO`) prevents any locally authenticated users from accessing the FTP server.
 
-=== 5. Anonymous users has NO write permissions.
+=== 5. Anonymous users have NO write permissions
 
-```
-write_enable=NO
-anon_upload_enable=NO
+To enhance security, we ensure that anonymous users do not have the ability to upload files, create directories, or modify existing files.
+
+[source,ini]
+----
+write_enable=NO 
+anon_upload_enable=NO 
 anon_mkdir_write_enable=NO
-```
+----
+* These settings prevent anonymous users from modifying or adding files, ensuring that the FTP server is only used for file retrieval, not file modification.
 
-=== 6. Anonymous users are not asked for an anonymous password.
+=== 6. Anonymous users are not asked for an anonymous password
 
-```
+To simplify the connection process for anonymous users, we configure the server so that users do not need to enter a password when connecting anonymously.
+
+[source,ini]
+----
 no_anon_password=YES
-```
+----
+* Setting `no_anon_password=YES` ensures that anonymous users are not prompted for a password, making the server more accessible.
 
-=== 7. Data connection timeout will be 30 secs.
+=== 7. Data connection timeout will be 30 seconds
 
-```
+To prevent hanging or abandoned connections from taking up server resources, we set a timeout for the data connection.
+
+[source,ini]
+----
 data_connection_timeout=30
-```
+----
+* The `data_connection_timeout` ensures that inactive connections are terminated after 30 seconds, freeing up resources and preventing potential security risks.
 
 === 8. Limit max data transfer bandwidth to 5KB/s
 
-```
+To prevent excessive bandwidth usage by anonymous users, we set a maximum data transfer rate limit.
+
+[source,ini]
+----
 anon_max_rate=5120
-```
+----
+* This setting restricts anonymous users to a data transfer rate of 5KB per second (`5120` bytes), which helps avoid server overload and controls network bandwidth.
 
 === 9. The server shows a banner "Welcome to SRI FTP anonymous server"
 
-```
+Adding a custom banner is a good way to provide information to users when they connect to the FTP server. This can be a greeting message or important instructions.
+
+[source,ini]
+----
 ftpd_banner=Welcome to SRI FTP anonymous server
-```
+----
+* The `ftpd_banner` setting allows you to display a welcoming message, informing users about the server or any specific usage policies.
 
-=== 10. The server shows an ascii art file in the land directory.
+=== 10. The server shows an ASCII art file in the login directory
 
-```yml
+To further personalize the experience, the server can display an ASCII art banner. We will use Ansible to copy an ASCII art file to the correct directory on the server.
+
+[source,yaml]
+----
 - name: Copy banner file
-    ansible.builtin.copy:
+  ansible.builtin.copy:
     src: ../files/ftp/provisional2_message.txt
     dest: /etc/vsftpd.banner
-```
+----
+* This task copies the ASCII art file to the server, which will be displayed during login.
 
-```
+Then, specify the banner file location in the `vsftpd.conf` configuration:
+
+[source,ini]
+----
 banner_file=/etc/vsftpd.banner
-```
+----
+* This setting ensures that the ASCII art file is shown when users log into the FTP server.
 
-=== 11. Test the configuration with two clients. Test passive and active connection mode (pftp for passive connection).
+=== 11. Test the configuration with two clients
+
+
+
+==== Passive Mode
+
+Passie mode is the default mode in FileZilla, so just by connecting to the server we are using passive mode.
+
+image::assets/passive1.jpg[Testing Passive Mode]
+image::assets/passive2.jpg[Testing Passive Mode]
+
+We are correctly using passive mode.
+
+==== Active Mode
+
+If we want to connect with active mode go yo "Tranfer Settings" and select "Active".
+
+image::assets/active1.jpg[Testing Active Mode]
+
+As you can see we are conneting correctly with active mode.
+
+image::assets/active2.jpg[Testing Active Mode]
+
+== 4.3. Implementation of Encryption (SSL/TLS)
+
+SSL/TLS (Secure Sockets Layer / Transport Layer Security) are cryptographic protocols designed to provide secure communication over a computer network. Implementing SSL/TLS on an FTP server ensures that data transferred between the client and the server is encrypted, providing confidentiality and integrity of the files being transferred. It also prevents eavesdropping, tampering, and forgery of data.
+
+Here we will document the process of configuring SSL/TLS encryption on a second FTP server to secure file transfers.
+
+=== 1. Configure the SSL/TLS security layer on the second FTP server
+
+To enable SSL/TLS encryption on the second FTP server, we need to modify the `vsftpd.conf` configuration file and configure the server to support secure connections.
+
+First, ensure that the `vsftpd` package has SSL/TLS support enabled. The SSL/TLS configuration can be added to `vsftpd.conf` by specifying the necessary settings for SSL and the paths to the SSL certificate and key files.
+
+[source,ini]
+----
+ssl_enable=YES
+rsa_cert_file=/etc/ssl/certs/ssl-cert-pub.pem
+rsa_private_key_file=/etc/ssl/private/ssl-cert-priv.key
+----
+* `ssl_enable=YES`: Enables SSL/TLS support.
+* `rsa_cert_file`: Path to the server's SSL certificate.
+* `rsa_private_key_file`: Path to the server's private key.
+
+These settings ensure that the server will accept secure SSL/TLS connections.
+
+=== 2. Demonstrate the encryption capability during data transfer
+
+image::assets/ssl_connection1.jpg[ssl]
+image::assets/ssl_connection2.jpg[ssl]
+image::assets/ssl_connection3.jpg[ssl]
+
+=== 3. Verify correct configuration using testing tools and certificate checks
+
+As you can see we can connect as laura to the ftp server using FileZilla.
+
+image::assets/ssl_connection1.jpg[ssl]
+
+It will show us the certificate.
+
+image::assets/ssl_connection2.jpg[ssl]
+
+And we can connect to the server correctly using ssl.
+
+image::assets/ssl_connection3.jpg[ssl]
+
+=== 4. Local users are forced to connect with a secure connection
+
+As you can see Laura can't connect to the server without ssl, it is a default configuration and we have not changed anything.
+
+image::assets/user_need_ssl.jpg[Laura needs a secure connection]
+
+=== 5. Document on the importance of encryption in secure file transfer
+
+Encryption is a critical component of securing file transfers over a network. Without encryption, sensitive data can be intercepted, tampered with, or stolen during transmission. FTP, by default, transmits data in plaintext, which means that any data sent over the network, including usernames, passwords, and file contents, can be easily read by attackers using network sniffing tools.
+
+By implementing SSL/TLS, we ensure that:
+* **Data confidentiality**: Files and credentials are encrypted, protecting them from unauthorized access.
+* **Data integrity**: SSL/TLS provides mechanisms to detect any tampering with data during transmission.
+* **Authentication**: Ensures that both the client and server can authenticate each other, preventing man-in-the-middle attacks.
+
+Overall, SSL/TLS encryption provides a secure environment for file transfer, reducing the risk of data breaches and ensuring compliance with security policies and regulations, such as GDPR or HIPAA.
+
+By enforcing SSL/TLS for all connections, we can ensure that both anonymous and local users transmit data securely, which is vital for maintaining the confidentiality and integrity of transferred files.
+
+== Álvaro
+
+== 4.4. Configuration of DNS server
+
+The **DNS (Domain Name System)** is a system responsible for translating human-readable domain names, such as `ns.sri.ies`, into machine-readable IP addresses, and vice versa. This system is fundamental for network communication, as it allows users and applications to connect to services without needing to remember numerical IP addresses.
+
+In this task, we configured a DNS server to handle forward and reverse resolution for the `sri.ies` domain. This includes defining the records for key services within the domain (`ns.sri.ies`, `mirror.sri.ies`, `ftp.sri.ies`) and enabling external queries to be forwarded to a public DNS server. Below, I explain in detail the steps followed to complete this setup.
+
+=== 1. Install a third virtual machine with a FTP server with authority on the domain sri.ies. This machine is ns.sri.ies.
+
+This machine is ns.sri.ies.
+
+The first step was to install and configure a virtual machine designated as `ns.sri.ies`. This machine serves two purposes:
+  - It acts as the primary DNS server for the `sri.ies` domain.
+  - It provides authority over the `sri.ies` domain, meaning it is responsible for responding to DNS queries about names and IP addresses within this domain.
+
+[source,ruby]
+----
+config.vm.define "dns" do |dns|
+    dns.vm.hostname = "ns.sri.ies"
+    dns.vm.network "private_network", ip: "192.168.57.10"
+    dns.vm.network "forwarded_port", guest: 22, host: 2100
+end
+----
+
+To achieve this:
+
+  - I installed the BIND9 DNS server software on the virtual machine.
+
+[source,yaml]
+----
+- name: Install bind9
+  apt:
+   name: 
+   - bind9
+   - bind9utils
+   - bind9-doc
+   update_cache: yes
+----
+
+  - I configured the `named.conf.local` file to define the forward and reverse zones for the domain `sri.ies`. The forward zone resolves domain names to IP addresses, and the reverse zone resolves IP addresses back to domain names.
+
+[source,bash]
+----
+zone "sri.ies" {
+      type master;
+      file "/etc/bind/db.sri.ies";
+  };
+----
+
+  - Finally, I created the zone files (`/etc/bind/db.sri.ies` for forward resolution and `/etc/bind/db.192.168.57` for reverse resolution) to include the necessary DNS records.
+
+=== 2. It has record for mirror.sri.ies that points to the anonymous FTP server and ftp.sri.ies for the local user's FTP server.
+
+Next, I configured DNS records to define the key services within the `sri.ies` domain:
+  - **Forward resolution (A records):**
+	- `ns.sri.ies` -> `192.168.57.10`
+	- `mirror.sri.ies` -> `192.168.57.20` (anonymous FTP server)
+	- `ftp.sri.ies` -> `192.168.57.30` (FTP server for local users)
+  - **Reverse resolution (PTR records):**
+	- `192.168.57.10` -> `ns.sri.ies`
+	- `192.168.57.20` -> `mirror.sri.ies`
+	- `192.168.57.30` -> `ftp.sri.ies`
+
+The forward records are stored in the forward zone file (`db.sri.ies`), while the reverse records are in the reverse zone file (`db.192.168.57`).
+
+These records allow devices in the network to resolve domain names to their corresponding IP addresses and vice versa, ensuring proper connectivity.
+
+==== db.sri.ies
+
+[source,bash]
+----
+; Zona sri.ies
+$ORIGIN sri.ies.
+$TTL 604800
+@       IN      SOA     ns.sri.ies. admin.sri.ies. (
+		  2           ; Serial
+		  604800      ; Refresh
+		  86400       ; Retry
+		  2419200     ; Expire
+		  604800 )    ; Negative Cache TTL
+  ;
+@       IN      NS      ns.sri.ies.
+ns      IN      A       192.168.57.10
+mirror  IN      A       192.168.57.20
+ftp     IN      A       192.168.57.30
+----
+
+==== db.192.168.57
+
+[source,bash]
+----
+; Zona inversa para 192.168.57.0/24
+$TTL    604800
+@       IN      SOA     ns.sri.ies. admin.sri.ies. (
+		  2           ; Serial
+		  604800      ; Refresh
+		  86400       ; Retry
+		  2419200     ; Expire
+		  604800 )    ; Negative Cache TTL
+  ;
+    @       IN      NS      ns.sri.ies.
+10        IN      PTR     ns.sri.ies.
+20        IN      PTR     mirror.sri.ies.
+30        IN      PTR     ftp.sri.ies.
+----
+
+=== 3. Redirect queries for other domains to Cloudfare's server 1.1.1.1
+
+To ensure the DNS server could resolve domain names outside the `sri.ies` domain, I configured DNS forwarding in the `named.conf.options` file. This involved specifying Cloudflare's public DNS server (`1.1.1.1`) as the forwarder for any queries not related to the `sri.ies` domain.
+
+[source,bash]
+----
+options {
+	directory "/var/cache/bind";
+
+    forwarders {
+	    1.1.1.1; // Cloudflare DNS
+        1.0.0.1; // Cloudflare DNS
+    };
+
+    dnssec-validation auto;
+    
+    listen-on { any; };
+    listen-on-v6 { any; };
+};
+----
+
+This step ensures that devices within the network can access both internal and external services seamlessly. For example:
+  - Internal query: Resolving `ftp.sri.ies` is handled by the local DNS server.
+  - External query: Resolving `www.google.com` is forwarded to Cloudflare's DNS server.
+
+
+=== 4. Both FTP server has ns.sri.ies as name server.
+
+Finally, I configured both FTP servers (`mirror.sri.ies` and `ftp.sri.ies`) to use `ns.sri.ies` as their DNS name server. This ensures that both servers can:
+  - Resolve domain names within the `sri.ies` domain, such as `ftp.sri.ies` or `mirror.sri.ies`.
+  - Forward external queries to the Cloudflare DNS server through `ns.sri.ies`.
+
+==== resolv.conf
+
+[source, bash]
+----
+nameserver 192.168.57.10
+search sri.ies
+----
+
+==== mirror.sri.ies
+[source, bash]
+----
+- name: Copy the resolv.conf
+ansible.builtin.copy:
+src: "../resolv.conf"
+dest: /etc/
+----
+
+==== ftp.sri.ies
+
+[source, bash]
+----
+- name: Copy the resolv.conf
+ansible.builtin.copy:
+  src: "../resolv.conf"
+  dest: /etc/
+----
+
+This configuration was validated by testing the resolution of both forward and reverse records using tools like `dig` and a custom Bash script (`dns-test.sh`). The script verified that:
+  - Forward queries (e.g., `dig ftp.sri.ies`) return the correct IP addresses.
+  - Reverse queries (e.g., `dig -x 192.168.57.30`) return the correct domain names.
+
+==== dns-test.sh
+
+[source,bash]
+----
+set -euo pipefail
+
+function resolve () {
+dig $nameserver +short $@
+}
+
+nameserver=@$1
+
+resolve ns.sri.ies
+resolve ftp.sri.ies
+resolve mirror.sri.ies
+
+resolve -x 192.168.57.10
+resolve -x 192.168.57.20
+resolve -x 192.168.57.30
+----
+
+=== Extra information
+
+In order to set the configuration in the dns machine I copy the files into it with the ansible provision
+
+==== ns-playbook.yaml
+
+[source,yaml]
+----
+- name: Copy the DNS config
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop: 
+    - { src: "{{ dns_path }}/named.conf.local", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/named.conf.options", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/db.sri.ies", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/db.192.168.57", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/named", dest: "/etc/default/" }
+    - { src: "../resolv.conf", dest: "/etc/"}
+----
+
+We also need to validate and restart bind9 services
+
+==== ns-playbook.yaml
+[source,yaml]
+----
+- name: Validate Bind9 configuration
+  command: named-checkconf
+
+- name: Restart bind9
+  service:
+    name: bind9
+    state: restarted
+----
+
+And also validate the DNS configuration and the zone file
+
+==== ns-playbook.yaml
+[source,yaml]
+----
+- name: Validate DNS configuration
+command: named-checkconf
+register: conf_check
+failed_when: conf_check.rc != 0
+
+- name: Validate zone file
+command: named-checkzone sri.ies /etc/bind/db.sri.ies
+register: zone_check
+failed_when: zone_check.rc != 0
+----
+
+
+With this setup, the DNS server successfully manages all domain-related queries for the `sri.ies` network while also providing access to external resources.
+
 
 == This task has been completed by:
 
