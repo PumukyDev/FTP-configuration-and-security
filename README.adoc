@@ -132,12 +132,25 @@ banner_file=/etc/vsftpd.banner
 === 11. Test the configuration with two clients
 
 
+
 ==== Passive Mode
 
+Passie mode is the default mode in FileZilla, so just by connecting to the server we are using passive mode.
+
+image::assets/passive1.jpg[Testing Passive Mode]
+image::assets/passive2.jpg[Testing Passive Mode]
+
+We are correctly using passive mode.
 
 ==== Active Mode
 
+If we want to connect with active mode go yo "Tranfer Settings" and select "Active".
 
+image::assets/active1.jpg[Testing Active Mode]
+
+As you can see we are conneting correctly with active mode.
+
+image::assets/active2.jpg[Testing Active Mode]
 
 == 4.3. Implementation of Encryption (SSL/TLS)
 
@@ -165,12 +178,29 @@ These settings ensure that the server will accept secure SSL/TLS connections.
 
 === 2. Demonstrate the encryption capability during data transfer
 
+image::assets/ssl_connection1.jpg[ssl]
+image::assets/ssl_connection2.jpg[ssl]
+image::assets/ssl_connection3.jpg[ssl]
 
 === 3. Verify correct configuration using testing tools and certificate checks
 
+As you can see we can connect as laura to the ftp server using FileZilla.
+
+image::assets/ssl_connection1.jpg[ssl]
+
+It will show us the certificate.
+
+image::assets/ssl_connection2.jpg[ssl]
+
+And we can connect to the server correctly using ssl.
+
+image::assets/ssl_connection3.jpg[ssl]
 
 === 4. Local users are forced to connect with a secure connection
 
+As you can see Laura can't connect to the server without ssl, it is a default configuration and we have not changed anything.
+
+image::assets/user_need_ssl.jpg[Laura needs a secure connection]
 
 === 5. Document on the importance of encryption in secure file transfer
 
