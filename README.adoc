@@ -152,6 +152,386 @@ As you can see we are conneting correctly with active mode.
 
 image::assets/active2.jpg[Testing Active Mode]
 
+
+== JESUS
+
+
+== Configuration of the FTP Server with Local Users
+
+We have created the configuration of the mirror machine using an Ansible archive. Below is a step-by-step explanation of all the Ansible features associated with the mirror FTP machine.
+
+== Inventory Configuration
+
+We created a group for the two FTP servers called `FTPS`. This allows us to install the same software on both machines simultaneously. The inventory file looks like this:
+
+[source,yaml]
+
+----
+ftps:
+  hosts:
+    mirror:
+      ansible_ssh_port: 2200
+    ftp:
+      ansible_ssh_port: 2300
+
+----
+
+
+== FTP Service Configuration
+
+Below is the configuration defined in the `ftp-playbook.yml` file. This playbook ensures the FTP service is installed on both machines.
+
+[source,yaml]
+----
+---
+- name: Configure FTP service
+  hosts: ftps
+  become: True
+  tasks:
+    - name: Install vsftpd package
+      ansible.builtin.apt:
+        name: vsftpd
+        state: present
+        update_cache: yes
+----
+
+=== Mirror-Specific Configuration
+
+This section details the configuration of the mirror FTP server.
+
+==== Variables for Passwords and Configuration Paths
+
+The following variables define the passwords for the users and the path for the configuration file. The configuration file will be copied to the correct destination folder.
+
+[source,yaml]
+----
+- name: Configure FTP service in mirror server
+  hosts: mirror
+  become: True
+  vars:
+    charles_password: "{{ '1234' | password_hash('sha512') }}"
+    laura_password: "{{ '1234' | password_hash('sha512') }}"
+  tasks:
+    - name: Copy ftp.vsftpd configuration file
+      ansible.builtin.copy:
+        src: ../files/ftp/mirror.vsftpd.conf
+        dest: /etc/vsftpd.conf
+----
+
+==== Chroot List Configuration
+
+The following configuration defines the chroot file path:
+
+[source,yaml]
+----
+- name: Copy chroot_list for mirror
+  ansible.builtin.copy:
+    src: ../files/ftp/vsftpd.chroot_list
+    dest: /etc/vsftpd.chroot_list
+----
+
+==== User Configuration
+
+The users `charles` and `laura` are created with their respective configurations.
+
+`charles`:
+
+[source,yaml]
+----
+- name: Create users for mirror
+  block:
+    - name: Create user charles
+      ansible.builtin.user:
+        name: charles
+        password: "{{ charles_password }}"
+        shell: /bin/bash
+        state: present
+----
+
+`laura`:
+
+[source,yaml]
+----
+- name: Create user laura
+  ansible.builtin.user:
+    name: laura
+    password: "{{ laura_password }}"
+    shell: /bin/bash
+    state: present
+----
+
+==== Directory Configuration for Users
+
+The directories for `charles` and `laura` are created with appropriate ownership and permissions:
+
+[source,yaml]
+----
+- name: Create home directory for charles
+  ansible.builtin.file:
+    path: /home/charles/ftp
+    state: directory
+    owner: charles
+    group: charles
+    mode: '0755'
+
+- name: Create home directory for laura
+  ansible.builtin.file:
+    path: /home/laura/ftp
+    state: directory
+    owner: laura
+    group: laura
+    mode: '0755'
+----
+
+==== Service Restart Configuration
+
+At the end of the playbook, the FTP service is restarted to apply all changes:
+
+[source,yaml]
+----
+- name: Restart vsftpd service
+  hosts: ftps
+  become: True
+  tasks:
+    - name: Restart vsftpd service
+      ansible.builtin.service:
+        name: vsftpd
+        state: restarted
+----
+
+== Chroot List File
+
+The `chroot_list` file specifies the user that is not restricted to their home directory. In this case, only `laura` is listed:
+
+[source,plain]
+----
+laura
+----
+
+== FTP Server Configuration File
+
+Below is the complete configuration for the FTP server, including settings for authentication, chroot, SSL, and user restrictions:
+
+[source,ini]
+----
+listen=YES
+listen_ipv6=NO
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+anon_upload_enable=NO
+anon_mkdir_write_enable=NO
+dirmessage_enable=YES
+use_localtime=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+data_connection_timeout=30
+ftpd_banner=Welcome to SRI FTP server
+chroot_local_user=YES
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+allow_writeable_chroot=YES
+secure_chroot_dir=/var/run/vsftpd/empty
+rsa_cert_file=/etc/ssl/certs/ssl-cert-pub.pem
+rsa_private_key_file=/etc/ssl/private/ssl-cert-priv.key
+ssl_enable=YES
+----
+
+
+Now I'm going to explain the problems I had trying to work at home.
+
+### Report on the Configuration and Troubleshooting Process for Nested Virtualization  
+
+**1. Initial Context**  
+- **Main Device**: iMac 2019 with dual boot (macOS and Windows 10).  
+- **Objective**: Set up a development environment with VirtualBox, Vagrant, and Ansible on a virtualized Ubuntu machine.  
+
+**2. Initial Setup**  
+- **On Windows 10 (iMac)**:  
+  - Installed VirtualBox.  
+  - Created a virtual machine with Ubuntu.  
+- **On the Ubuntu VM**:  
+  - Installed Visual Studio Code (VS Code).  
+  - Installed Vagrant and Ansible.  
+  - Attempted to configure VirtualBox within the VM (nested virtualization).  
+
+**3. Issues Encountered**  
+- **Problem**: Nested virtualization did not work despite being enabled in VirtualBox settings.  
+- **Investigation and Tests**:  
+  - Verified VirtualBox settings.  
+  - Checked that nested virtualization was enabled.  
+  - Confirmed the processor supported virtualization (Intel VT-x).  
+- **Outcome**: Unable to get nested virtualization working.  
+
+**4. Implemented Solution**  
+- Decided to use a different device to bypass the limitations of the environment.  
+
+**5. Configuration on the New Device**  
+- **Alternative Device**: Windows Surface with Windows 10.  
+- **Steps Taken**:  
+  - Created an empty partition on Windows to install Ubuntu.  
+  - Used Rufus to create a bootable USB with Ubuntu 24.  
+  - Installed Ubuntu manually on the empty partition.  
+  - Configured dual boot with GRUB (no issues).  
+
+**6. Environment Setup on Ubuntu**  
+- **Installed**:  
+  - VS Code.  
+  - Vagrant.  
+  - Ansible.  
+- **Issues Found**:  
+  - Problems with VirtualBox on Ubuntu.  
+
+**7. Final Observations**  
+- The initial configuration on the iMac with dual boot was unfeasible due to nested virtualization limitations in VirtualBox.  
+- Installing Ubuntu on the Surface resolved the base environment issues, enabling further setup.  
+- Some issues with VirtualBox on the new environment still need to be resolved.  
+
+**8. Recommendations**  
+- Verify full support for nested virtualization on both hardware and software before attempting.  
+- Consider alternative environments like WSL2 to reduce complexity on Windows systems.  
+- Document VirtualBox errors on Ubuntu for specific solutions in future iterations.  
+
+**9. Key Commands Used During the Process**  
+- **Create Bootable USB**:  
+  - Done via Rufus on Windows.  
+- **Install Packages on Ubuntu**:  
+  ```bash
+  sudo apt update && sudo apt install virtualbox vagrant ansible
+  ```
+
+---
+
+### Report on VirtualBox Installation Attempts on Ubuntu  
+
+**1. Initial Context**  
+- **OS**: Ubuntu.  
+- **Purpose**: Install VirtualBox for managing virtual machines.  
+- **Prior Changes**: Secure Boot disabled due to compatibility issues.  
+
+**2. First Attempt**  
+- **Command Used**:  
+  ```bash
+  sudo apt install virtualbox
+  ```  
+- **Result**: Error indicating the version in the default repositories was outdated or incompatible with the current kernel.  
+- **Additional Action**: Added the official Oracle repository for VirtualBox:  
+  ```bash
+  sudo add-apt-repository "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+  sudo apt update
+  ```
+
+**3. Second Attempt**  
+- **Command Used After Adding the Repository**:  
+  ```bash
+  sudo apt install virtualbox-6.1
+  ```  
+- **Result**: Dependency errors (e.g., missing `dkms` for kernel module compilation).  
+- **Additional Actions**: Installed required dependencies:  
+  ```bash
+  sudo apt install dkms build-essential linux-headers-$(uname -r)
+  sudo apt install virtualbox-6.1
+  ```
+
+**4. Issues with Secure Boot**  
+- **Problem**: Errors during installation related to kernel module signing due to Secure Boot.  
+- **Solution**: Disabled Secure Boot in BIOS/UEFI. Reattempted installation, successfully compiled, and loaded kernel modules.  
+
+**5. Final Observations**  
+- Main issues:  
+  - Outdated repositories.  
+  - Missing dependencies for kernel module compilation.  
+  - Secure Boot blocking kernel module loading.  
+- Key steps: Adding the official repository and disabling Secure Boot.  
+
+**6. Recommendations**  
+- Verify kernel version and ensure headers are installed.  
+- Always use Oracle’s official repository for the latest VirtualBox version.  
+- Disable Secure Boot when compiling or signing kernel modules is required.  
+
+**Commands for Future Reference**  
+- **Add Official VirtualBox Repository**:  
+  ```bash
+  sudo add-apt-repository "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+  sudo apt update
+  ```  
+- **Install VirtualBox and Dependencies**:  
+  ```bash
+  sudo apt install dkms build-essential linux-headers-$(uname -r) virtualbox-6.1
+  ```
+
+---
+
+### Report on python3-passlib Installation Attempts on Ubuntu  
+
+**1. Initial Context**  
+- **OS**: Ubuntu.  
+- **Purpose**: Install `python3-passlib` library for a project.  
+- **Prior Changes**: Secure Boot disabled to enable VirtualBox.  
+
+**2. First Attempt**  
+- **Command Used**:  
+  ```bash
+  sudo apt install python3-passlib
+  ```  
+- **Result**: Error indicating the package could not be located, likely due to:  
+  - Outdated repositories.  
+  - Missing configuration for required repositories.  
+- **Additional Action**: Verified internet connection and updated repositories:  
+  ```bash
+  sudo apt update
+  ```
+
+**3. Second Attempt**  
+- **Command with pip**:  
+  ```bash
+  pip3 install passlib
+  ```  
+- **Result**: Permission errors for global installation.  
+- **Proposed Solution**: Run the command with superuser privileges:  
+  ```bash
+  sudo pip3 install passlib
+  ```
+
+**4. Virtual Environment Creation**  
+- **Commands Used**:  
+  ```bash
+  python3 -m venv env
+  source env/bin/activate
+  pip install passlib
+  ```  
+- **Result**: Created virtual environment, but `pip install passlib` failed due to an outdated `pip`.  
+- **Additional Action**: Updated `pip` in the virtual environment:  
+  ```bash
+  pip install --upgrade pip
+  ```  
+  Successfully installed `passlib` afterward.  
+
+**5. Final Observations**  
+- Secure Boot does not directly affect Python package installations.  
+- Main issues:  
+  - Outdated Ubuntu repositories.  
+  - Permissions for global installation with `pip`.  
+  - Outdated `pip` in the virtual environment.  
+- Using a virtual environment was the most effective solution.  
+
+**6. Recommendations**  
+- Use virtual environments to avoid permission and dependency issues.  
+- Ensure repositories are updated before installing packages with `apt`.  
+- Regularly update `pip` to avoid compatibility issues.  
+
+**Command for Future Reference**  
+- **Install python3-passlib with apt**:  
+  ```bash
+  sudo apt update && sudo apt install python3-passlib
+  ```  
+- **Using a Virtual Environment**:  
+  ```bash
+  python3 -m venv env
+  source env/bin/activate
+  pip install passlib
+  ```
+  
 == 4.3. Implementation of Encryption (SSL/TLS)
 
 SSL/TLS (Secure Sockets Layer / Transport Layer Security) are cryptographic protocols designed to provide secure communication over a computer network. Implementing SSL/TLS on an FTP server ensures that data transferred between the client and the server is encrypted, providing confidentiality and integrity of the files being transferred. It also prevents eavesdropping, tampering, and forgery of data.
