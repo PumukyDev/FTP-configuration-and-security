@@ -252,7 +252,6 @@ The forward records are stored in the forward zone file (`db.sri.ies`), while th
 
 These records allow devices in the network to resolve domain names to their corresponding IP addresses and vice versa, ensuring proper connectivity.
 
-
   ==== db.sri.ies
 
   [source,bash]
@@ -325,6 +324,7 @@ Finally, I configured both FTP servers (`mirror.sri.ies` and `ftp.sri.ies`) to u
   - Forward external queries to the Cloudflare DNS server through `ns.sri.ies`.
 
   ==== resolv.conf
+
   [source, bash]
   ----
   nameserver 192.168.57.10
@@ -332,6 +332,7 @@ Finally, I configured both FTP servers (`mirror.sri.ies` and `ftp.sri.ies`) to u
   ----
 
   ==== mirror.sri.ies
+
   [source, bash]
   ----
   - name: Copy the resolv.conf
@@ -341,6 +342,7 @@ Finally, I configured both FTP servers (`mirror.sri.ies` and `ftp.sri.ies`) to u
   ----
 
   ==== ftp.sri.ies
+
   [source, bash]
   ----
   - name: Copy the resolv.conf
@@ -354,6 +356,7 @@ This configuration was validated by testing the resolution of both forward and r
   - Reverse queries (e.g., `dig -x 192.168.57.30`) return the correct domain names.
 
   ==== dns-test.sh
+
   [source,bash]
   ----
   set -euo pipefail
@@ -380,6 +383,7 @@ In order to set the configuration in the dns machine I copy the files into it wi
 ==== ns-playbook.yaml
 
 [source,yaml]
+
 ----
 - name: Copy the DNS config
   copy:
@@ -397,6 +401,7 @@ In order to set the configuration in the dns machine I copy the files into it wi
 We also need to validate and restart bind9 services
 
 ==== ns-playbook.yaml
+
 [source,yaml]
 ----
 - name: Validate Bind9 configuration
@@ -411,6 +416,7 @@ We also need to validate and restart bind9 services
 And also validate the DNS configuration and the zone file
 
 ==== ns-playbook.yaml
+
 [source,yaml]
 ----
 - name: Validate DNS configuration
