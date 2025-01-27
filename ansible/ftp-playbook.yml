@@ -1,6 +1,6 @@
 ---
 - name: Configure FTP service
-  hosts: ftps
+  hosts: ftp_servers
   become: True
   tasks:
     - name: Install vsftpd package
@@ -18,6 +18,12 @@
         src: ../files/ftp/ftp.vsftpd.conf
         dest: /etc/vsftpd.conf
 
+    - name: Ensure ftp user exists
+      ansible.builtin.user:
+        name: ftp
+        shell: /usr/sbin/nologin
+        state: present
+
     - name: Create anonymous FTP root directory
       ansible.builtin.file:
         path: /srv/ftp
@@ -30,6 +36,11 @@
       ansible.builtin.copy:
         src: ../files/ftp/provisional2_message.txt
         dest: /etc/vsftpd.banner
+
+    - name: Copy the resolv.conf
+      ansible.builtin.copy:
+        src: "../resolv.conf"
+        dest: /etc/
 
 - name: Configure FTP service in mirror server
   hosts: mirror
@@ -87,13 +98,13 @@
 
         - name: Generate SSL Private Key
           openssl_privatekey:
-            path: /etc/ssl/private/ssl-cert-priv.key
+            path: "{{ ssl_path }}/ssl-cert-priv.key"
             size: 2048
 
         - name: Generate sign request (CSR)
           openssl_csr:
-            path: /etc/ssl/private/ssl-sign.csr
-            privatekey_path: /etc/ssl/private/ssl-cert-priv.key
+            path: "{{ ssl_path }}/ssl-sign.csr"
+            privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
             common_name: "ssl-ftp-cert"
             country_name: "ES"
             organization_name: "IZV"
@@ -102,12 +113,17 @@
         - name: Obtain SSL public key
           openssl_certificate:
             path: /etc/ssl/certs/ssl-cert-pub.pem
-            privatekey_path: /etc/ssl/private/ssl-cert-priv.key
-            csr_path: /etc/ssl/private/ssl-sign.csr
+            privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
+            csr_path: "{{ ssl_path }}/ssl-sign.csr"
             provider: selfsigned
 
+    - name: Copy the resolv.conf
+      ansible.builtin.copy:
+        src: "../resolv.conf"
+        dest: /etc/
+
 - name: Restart vsftpd service
-  hosts: ftps
+  hosts: ftp_servers
   become: True
   tasks:
     - name: Restart vsftpd service

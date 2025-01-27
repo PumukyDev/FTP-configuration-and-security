@@ -15,11 +15,12 @@
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
       loop: 
-        - { src: "../files/dns/named.conf.local", dest: "/etc/bind/" }
-        - { src: "../files/dns/named.conf.options", dest: "/etc/bind/" }
-        - { src: "../files/dns/db.sri.ies", dest: "/etc/bind/" }
-        - { src: "../files/dns/db.192.168.57", dest: "/etc/bind/" }
-        - { src: "../files/dns/named", dest: "/etc/default/" }
+        - { src: "{{ dns_path }}/named.conf.local", dest: "/etc/bind/" }
+        - { src: "{{ dns_path }}/named.conf.options", dest: "/etc/bind/" }
+        - { src: "{{ dns_path }}/db.sri.ies", dest: "/etc/bind/" }
+        - { src: "{{ dns_path }}/db.192.168.57", dest: "/etc/bind/" }
+        - { src: "{{ dns_path }}/named", dest: "/etc/default/" }
+        - { src: "../resolv.conf", dest: "/etc/"}
 
     - name: Set permissions for Bind9
       file:
