@@ -765,7 +765,7 @@ dest: /etc/
 
 ==== Comprobation:
 
-image::assets/mirror.jpg[Comprobation]
+image::assets/mirror.png[Comprobation]
 
 ==== ftp.sri.ies
 
@@ -779,7 +779,7 @@ ansible.builtin.copy:
 
 ==== Comprobation:
 
-image::assets/ftp_test4.jpg[Comprobation]
+image::assets/ftp_test4.png[Comprobation]
 
 This configuration was validated by testing the resolution of both forward and reverse records using tools like `dig` and a custom Bash script (`dns-test.sh`). The script verified that:
   - Forward queries (e.g., `dig ftp.sri.ies`) return the correct IP addresses.
@@ -808,7 +808,7 @@ resolve -x 192.168.57.30
 
 ==== Comprobation:
 
-image::assets/script.jpg[Comprobation]
+image::assets/script.png[Comprobation]
 
 === Extra information
 
