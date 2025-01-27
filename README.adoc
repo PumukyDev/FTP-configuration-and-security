@@ -4,7 +4,7 @@ FTP (File Transfer Protocol) is a standard network protocol used to transfer fil
 
 For more information on the activity requirements, you can view the detailed document link: ftp-anonymous-and-local-users.pdf[here].
 
-== Adri
+== FTP
 
 === 1. Install FTP server software on the assigned machine
 
@@ -145,12 +145,13 @@ image::assets/ftp_test3.jpg[test_clients]
 
 ==== Passive Mode
 
-Passie mode is the default mode in FileZilla, so just by connecting to the server we are using passive mode.
+Passive mode is the default mode in FileZilla, so just by connecting to the server we are using passive mode.
 
 image::assets/passive1.jpg[Testing Passive Mode]
-image::assets/passive2.jpg[Testing Passive Mode]
 
 We are correctly using passive mode.
+
+image::assets/passive2.jpg[Testing Passive Mode]
 
 ==== Active Mode
 
@@ -162,15 +163,13 @@ As you can see we are conneting correctly with active mode.
 
 image::assets/active2.jpg[Testing Active Mode]
 
+== FTP MIRROR
 
-== Jesús
-
-
-== 1.Configuration of the FTP Server with Local Users
+=== 1.Configuration of the FTP Server with Local Users
 
 We have created the configuration of the mirror machine using an Ansible archive. Below is a step-by-step explanation of all the Ansible features associated with the mirror FTP machine.
 
-== 2.Inventory Configuration
+=== 2.Inventory Configuration
 
 We created a group for the two FTP servers called `FTPS`. This allows us to install the same software on both machines simultaneously. The inventory file looks like this:
 
@@ -187,7 +186,7 @@ ftps:
 ----
 
 
-== 3.FTP Service Configuration
+=== 3.FTP Service Configuration
 
 Below is the configuration defined in the `ftp-playbook.yml` file. This playbook ensures the FTP service is installed on both machines.
 
@@ -209,7 +208,7 @@ Below is the configuration defined in the `ftp-playbook.yml` file. This playbook
 
 This section details the configuration of the mirror FTP server.
 
-==== 5.Variables for Passwords and Configuration Paths
+=== 5.Variables for Passwords and Configuration Paths
 
 The following variables define the passwords for the users and the path for the configuration file. The configuration file will be copied to the correct destination folder.
 
@@ -228,7 +227,7 @@ The following variables define the passwords for the users and the path for the 
         dest: /etc/vsftpd.conf
 ----
 
-==== 6.Chroot List Configuration
+=== 6.Chroot List Configuration
 
 The following configuration defines the chroot file path:
 
@@ -270,7 +269,7 @@ The users `charles` and `laura` are created with their respective configurations
     state: present
 ----
 
-==== 8.Directory Configuration for Users
+=== 8.Directory Configuration for Users
 
 The directories for `charles` and `laura` are created with appropriate ownership and permissions:
 
@@ -293,7 +292,7 @@ The directories for `charles` and `laura` are created with appropriate ownership
     mode: '0755'
 ----
 
-==== 9.Service Restart Configuration
+=== 9.Service Restart Configuration
 
 At the end of the playbook, the FTP service is restarted to apply all changes:
 
@@ -309,7 +308,7 @@ At the end of the playbook, the FTP service is restarted to apply all changes:
         state: restarted
 ----
 
-== Chroot List File
+==== Chroot List File
 
 The `chroot_list` file specifies the user that is not restricted to their home directory. In this case, only `laura` is listed:
 
@@ -318,7 +317,7 @@ The `chroot_list` file specifies the user that is not restricted to their home d
 laura
 ----
 
-== 10.FTP Server Configuration File
+=== 10.FTP Server Configuration File
 
 Below is the complete configuration for the FTP server, including settings for authentication, chroot, SSL, and user restrictions:
 
@@ -435,59 +434,59 @@ Now I'm going to explain the problems I had trying to work at home.
 ----
 
 
-**3. Second Attempt**  
-- **Command Used After Adding the Repository**:  
+**3. Second Attempt**
+- **Command Used After Adding the Repository**:
 ----
   sudo apt install virtualbox-6.1
----- 
-- **Result**: Dependency errors (e.g., missing `dkms` for kernel module compilation).  
-- **Additional Actions**: Installed required dependencies:  
+----
+- **Result**: Dependency errors (e.g., missing `dkms` for kernel module compilation).
+- **Additional Actions**: Installed required dependencies:
 ----
   sudo apt install dkms build-essential linux-headers-$(uname -r)
   sudo apt install virtualbox-6.1
 ----
 
-**4. Issues with Secure Boot**  
+**4. Issues with Secure Boot**
 - **Problem**: Errors during installation related to kernel module signing due to Secure Boot.  
 - **Solution**: Disabled Secure Boot in BIOS/UEFI. Reattempted installation, successfully compiled, and loaded kernel modules.  
 
-**5. Final Observations**  
-- Main issues:  
-  - Outdated repositories.  
-  - Missing dependencies for kernel module compilation.  
-  - Secure Boot blocking kernel module loading.  
-- Key steps: Adding the official repository and disabling Secure Boot.  
+**5. Final Observations**
+- Main issues:
+  - Outdated repositories.
+  - Missing dependencies for kernel module compilation.
+  - Secure Boot blocking kernel module loading.
+- Key steps: Adding the official repository and disabling Secure Boot.
 
-**6. Recommendations**  
-- Verify kernel version and ensure headers are installed.  
-- Always use Oracle’s official repository for the latest VirtualBox version.  
-- Disable Secure Boot when compiling or signing kernel modules is required.  
+**6. Recommendations**
+- Verify kernel version and ensure headers are installed.
+- Always use Oracle’s official repository for the latest VirtualBox version.
+- Disable Secure Boot when compiling or signing kernel modules is required.
 
-**Commands for Future Reference**  
-- **Add Official VirtualBox Repository**:  
+**Commands for Future Reference**
+- **Add Official VirtualBox Repository**:
 ----
   sudo add-apt-repository "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
   sudo apt update
----- 
-- **Install VirtualBox and Dependencies**:  
+----
+- **Install VirtualBox and Dependencies**:
 ----
   sudo apt install dkms build-essential linux-headers-$(uname -r) virtualbox-6.1
 ----
 
 ---
 
-### Report on python3-passlib Installation Attempts on Ubuntu  
+### Report on python3-passlib Installation Attempts on Ubuntu
 
-**1. Initial Context**  
-- **OS**: Ubuntu.  
-- **Purpose**: Install `python3-passlib` library for a project.  
-- **Prior Changes**: Secure Boot disabled to enable VirtualBox.  
+**1. Initial Context**
+- **OS**: Ubuntu.
+- **Purpose**: Install `python3-passlib` library for a project.
+- **Prior Changes**: Secure Boot disabled to enable VirtualBox.
 
-**2. First Attempt**  
-- **Command Used**:  
+**2. First Attempt**
+- **Command Used**:
 ----
   sudo apt install python3-passlib
----- 
+----
 - **Result**: Error indicating the package could not be located, likely due to:  
   - Outdated repositories.  
   - Missing configuration for required repositories.  
@@ -496,33 +495,33 @@ Now I'm going to explain the problems I had trying to work at home.
   sudo apt update
 ----
 
-**3. Second Attempt**  
-- **Command with pip**:  
+**3. Second Attempt**
+- **Command with pip**:
 ----
   pip3 install passlib
----- 
-- **Result**: Permission errors for global installation.  
-- **Proposed Solution**: Run the command with superuser privileges:  
+----
+- **Result**: Permission errors for global installation.
+- **Proposed Solution**: Run the command with superuser privileges:
 ----
 ----
 
-**4. Virtual Environment Creation**  
-- **Commands Used**:  
+**4. Virtual Environment Creation**
+- **Commands Used**:
 ----
   python3 -m venv env
   source env/bin/activate
   pip install passlib
----- 
-- **Result**: Created virtual environment, but `pip install passlib` failed due to an outdated `pip`.  
-- **Additional Action**: Updated `pip` in the virtual environment:  
+----
+- **Result**: Created virtual environment, but `pip install passlib` failed due to an outdated `pip`.
+- **Additional Action**: Updated `pip` in the virtual environment:
 ----
   pip install --upgrade pip
----- 
-  Successfully installed `passlib` afterward.  
+----
+  Successfully installed `passlib` afterward.
 
 **5. Final Observations**  
 - Secure Boot does not directly affect Python package installations.  
-- Main issues:  
+- Main issues:
   - Outdated Ubuntu repositories.  
   - Permissions for global installation with `pip`.  
   - Outdated `pip` in the virtual environment.  
@@ -537,14 +536,14 @@ Now I'm going to explain the problems I had trying to work at home.
 - **Install python3-passlib with apt**:  
 ----
   sudo apt update && sudo apt install python3-passlib
----- 
+----
 - **Using a Virtual Environment**:  
 ----
   python3 -m venv env
   source env/bin/activate
   pip install passlib
 ----
-  
+
 == 4.3. Implementation of Encryption (SSL/TLS)
 
 SSL/TLS (Secure Sockets Layer / Transport Layer Security) are cryptographic protocols designed to provide secure communication over a computer network. Implementing SSL/TLS on an FTP server ensures that data transferred between the client and the server is encrypted, providing confidentiality and integrity of the files being transferred. It also prevents eavesdropping, tampering, and forgery of data.
@@ -608,7 +607,7 @@ Overall, SSL/TLS encryption provides a secure environment for file transfer, red
 
 By enforcing SSL/TLS for all connections, we can ensure that both anonymous and local users transmit data securely, which is vital for maintaining the confidentiality and integrity of transferred files.
 
-== Álvaro
+== DNS
 
 == 4.4. Configuration of DNS server
 
