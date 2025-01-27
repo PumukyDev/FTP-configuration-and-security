@@ -861,6 +861,14 @@ register: zone_check
 failed_when: zone_check.rc != 0
 ----
 
+==== /etc/resolv.conf
+[source,bash]
+----
+nameserver 192.168.57.10
+----
+
+We have to add this configuration to the main machine were we are running the machines
+
 
 With this setup, the DNS server successfully manages all domain-related queries for the `sri.ies` network while also providing access to external resources.
 
