@@ -131,7 +131,17 @@ banner_file=/etc/vsftpd.banner
 
 === 11. Test the configuration with two clients
 
+We can try with the terminal, we can see that the connection was successful.
 
+image::assets/ftp_test1.jpg[test_clients]
+
+Now, we try with FileZilla, just enter with anonymous:
+
+image::assets/ftp_test2.jpg[test_clients]
+
+As you can see we can connect perfectly.
+
+image::assets/ftp_test3.jpg[test_clients]
 
 ==== Passive Mode
 
