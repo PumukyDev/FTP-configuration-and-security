@@ -2,7 +2,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "debian/bullseye64"
   config.ssh.insert_key = false
 
-  ansible_config_file = "./ansible.cfg"
+  ansible_config_file = "./ansible/ansible.cfg"
   ansible_inventory_path = "./ansible/inventory/vagrant_inventory.yml"
 
   config.vm.define "dns" do |dns|
