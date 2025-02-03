@@ -18,6 +18,7 @@ jobs:
           sudo apt update
           sudo apt install -y asciidoctor
           gem install asciidoctor-pdf --user-install
+          echo "$(ruby -e 'print Gem.user_dir')/bin" >> $GITHUB_PATH
 
       - name: Convert README.adoc to PDF
         run: asciidoctor-pdf -o docs/README.pdf docs/README.adoc
