@@ -1,0 +1,32 @@
+name: Convert Asciidoc to PDF
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  convert-to-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y asciidoctor
+          gem install asciidoctor-pdf
+
+      - name: Convert README.adoc to PDF
+        run: asciidoctor-pdf -o docs/README.pdf docs/README.adoc
+
+      - name: Commit and push PDF
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/README.pdf
+          git diff --cached --quiet || (git commit -m "docs: update README.pdf" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
