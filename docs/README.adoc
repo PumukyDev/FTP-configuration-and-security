@@ -2,11 +2,8 @@
 
 FTP (File Transfer Protocol) is a standard network protocol used to transfer files between a client and a server on a computer network. It is widely used for sharing files, backing up data, and managing website files. In this guide, you will learn how to configure an FTP server for both anonymous and local user authentication, as well as implement security measures such as encryption and access controls.
 
-To automaticaly deploy the VM we are using:
-* Vagrant
-* Ansible
 
-For more information on the activity requirements, you can view the detailed document link: ftp-anonymous-and-local-users.pdf[here].
+For more information on the activity requirements, you can view the detailed document link:ftp-anonymous-and-local-users.pdf[here].
 
 == FTP
 
@@ -875,10 +872,3 @@ We have to add this configuration to the main machine were we are running the ma
 
 
 With this setup, the DNS server successfully manages all domain-related queries for the `sri.ies` network while also providing access to external resources.
-
-
-== This task has been completed by:
-
-* Adrián Bertos Gómez - Anonymous machine and SSL configuration
-* Álvaro García Márquez - Mirror machine configuration
-* Jesús Martínez Valero - DNS machine configuration

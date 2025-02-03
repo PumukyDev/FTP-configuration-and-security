@@ -1,0 +1,43 @@
+= FTP Server Configuration with Security
+
+== Objective
+
+The main objective of this activity is to provide practical skills in configuring FTP servers under two scenarios:
+one for anonymous access and another with local user authentication. Security measures are also implement using encryption to ensure secure file transfer. A DNS server is also configured in order to allow connections with easy to remember names instead of IP's.
+
+== Requirements
+
+* *A Linux system:* where you will run everything
+* *VirtualBox:* the virtualizer
+* *Vagrant:* to create the VM
+* *Ansible:* to provision the VM
+* *Passlib:* to encrypt user passwords
+
+== Setup Instructions
+
+*Clone the Repository*
+
+[source,bash]
+----
+   git clone https://github.com/PumukyDev/ftp-server.git
+   cd ftp-server
+----
+
+*Deploy the servers*
+
+[source,bash]
+----
+    vagrant up
+----
+
+== License
+
+This project is under link:https://github.com/PumukyDev/ftp-server/blob/main/LICENSE[MIT License]
+
+== Contributors
+
+This project was created by:
+
+* link:https://github.com/PumukyDev[Adrián Bertos Gómez]
+* link:https://github.com/Alvarogm27[Álvaro García Márquez]
+* link:https://github.com/valerobass[Jesús Martinez Valero]
