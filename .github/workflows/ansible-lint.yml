@@ -2,9 +2,7 @@ name: ansible-lint
 on:
   pull_request:
     branches: ["main"]
-
-# This enables the Run Workflow button on the Actions tab.
-workflow_dispatch:
+  workflow_dispatch:  # Aquí debe estar alineado correctamente
 
 jobs:
   build:
