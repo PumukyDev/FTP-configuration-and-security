@@ -1,33 +1,33 @@
-name: Convert Asciidoc to PDF
+name: GitHub Pages Publish
 
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
 on:
   push:
-    branches:
-      - main
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  convert-to-pdf:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y asciidoctor
-          gem install asciidoctor-pdf --user-install
-          echo "$(ruby -e 'print Gem.user_dir')/bin" >> $GITHUB_PATH
-
-      - name: Convert README.adoc to PDF
-        run: asciidoctor-pdf -o docs/README.pdf docs/README.adoc
-
-      - name: Commit and push PDF
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/README.pdf
-          git diff --cached --quiet || (git commit -m "docs: update README.pdf" && git push)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # Includes the AsciiDoctor GitHub Pages Action to convert adoc files to html and publish to gh-pages branch
+    - name: asciidoctor-ghpages
+      uses: manoelcampos/asciidoctor-ghpages-action@v2
+      with:
+        pdf_build: true
+        # asciidoctor_params: --attribute=nofooter
+        # adoc_file_ext: .ascii # default is .adoc
+        # source_dir: docs/ # default is .
+        # slides_build: true
+        # pre_build:
+        # post_build:
