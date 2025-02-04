@@ -109,8 +109,11 @@
         - name: Install dependencies to obtain SSL certificate
           ansible.builtin.package:
             update_cache: true
-            name: python3-cryptography
-
+            name:
+              - python3-cryptography
+              - openssl
+              - libssl-dev
+            state: present
         - name: Generate SSL Private Key
           community.crypto.openssl_privatekey:
             path: "{{ ssl_path }}/ssl-cert-priv.key"
