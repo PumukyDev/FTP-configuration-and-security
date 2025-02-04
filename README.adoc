@@ -30,6 +30,9 @@ one for anonymous access and another with local user authentication. Security me
     vagrant up
 ----
 
+*Documentation*
+To see full documentation of the project you can click link:https://github.com/PumukyDev/ftp-server/blob/gh-pages/ebook.pdf[here] or see the link:https://github.com/PumukyDev/ftp-server/tree/main/docs[docs/] directory.
+
 == License
 
 This project is under link:https://github.com/PumukyDev/ftp-server/blob/main/LICENSE[MIT License]
@@ -38,6 +41,6 @@ This project is under link:https://github.com/PumukyDev/ftp-server/blob/main/LIC
 
 This project was created by:
 
-* link:https://github.com/PumukyDev[Adrián Bertos Gómez]
-* link:https://github.com/Alvarogm27[Álvaro García Márquez]
-* link:https://github.com/valerobass[Jesús Martinez Valero]
+* link:https://github.com/PumukyDev[Adrián Bertos Gómez] - Project manager && FTP machine and SSL  manager
+* link:https://github.com/Alvarogm27[Álvaro García Márquez] - Mirror machine manager
+* link:https://github.com/valerobass[Jesús Martinez Valero] - DNS machine manager

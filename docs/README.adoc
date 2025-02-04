@@ -2,8 +2,9 @@
 
 FTP (File Transfer Protocol) is a standard network protocol used to transfer files between a client and a server on a computer network. It is widely used for sharing files, backing up data, and managing website files. In this guide, you will learn how to configure an FTP server for both anonymous and local user authentication, as well as implement security measures such as encryption and access controls.
 
-
 For more information on the activity requirements, you can view the detailed document link:ftp-anonymous-and-local-users.pdf[here].
+
+You can download the documentation in PDF format link:https://github.com/PumukyDev/ftp-server/blob/gh-pages/ebook.pdf[here].
 
 == FTP
 
