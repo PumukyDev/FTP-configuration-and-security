@@ -10,13 +10,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install Ansible and collections
-        run: |
-          pip install ansible
-          ansible-galaxy collection install community.crypto
 
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
         with:
           working_directory: "ansible"
+          requirements_file: requirements.txt
           setup_python: "true"
+          
