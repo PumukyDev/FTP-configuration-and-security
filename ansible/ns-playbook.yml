@@ -31,10 +31,10 @@
         group: bind
         mode: '0644'
       loop:
-        - /etc/bind/named.conf.local
-        - /etc/bind/named.conf.options
-        - /etc/bind/db.sri.ies
-        - /etc/default/named
+        - { src: "{{ bind_path }}/named.conf.local" }
+        - { src: "{{ bind_path }}/named.conf.options" }
+        - { src: "{{ bind_path }}/db.sri.ies" }
+        - { src: "/etc/default/named" }
 
     - name: Update serial in db.sri.ies
       ansible.builtin.replace:
