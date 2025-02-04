@@ -37,7 +37,7 @@
 
     - name: Copy banner file
       ansible.builtin.copy:
-        src: /vagrant/files/ftp/provisional2_message.txt
+        src: /vagrant/files/ftp/vsftpd.banner
         dest: /etc/vsftpd.banner
         owner: root
         group: root
