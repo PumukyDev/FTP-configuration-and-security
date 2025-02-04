@@ -1,1 +1,2 @@
 dns_path: ../files/dns
+bind_path: /etc/bin
