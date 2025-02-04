@@ -1,22 +1,25 @@
 ---
 - name: Configure FTP service
   hosts: ftp_servers
-  become: True
+  become: true
   tasks:
     - name: Install vsftpd package
       ansible.builtin.apt:
         name: vsftpd
         state: present
-        update_cache: yes
+        update_cache: true
 
 - name: Configure FTP service in ftp server
   hosts: ftp
-  become: True
+  become: true
   tasks:
     - name: Copy ftp.vsftpd configuration file
       ansible.builtin.copy:
-        src: ../files/ftp/ftp.vsftpd.conf
+        src: /files/ftp/ftp.vsftpd.conf
         dest: /etc/vsftpd.conf
+        owner: root
+        group: root
+        mode: '0644'
 
     - name: Ensure ftp user exists
       ansible.builtin.user:
@@ -28,36 +31,48 @@
       ansible.builtin.file:
         path: /srv/ftp
         state: directory
-        owner: ftp
-        group: ftp
-        mode: '0555'
+        owner: root
+        group: root
+        mode: '0644'
 
     - name: Copy banner file
       ansible.builtin.copy:
-        src: ../files/ftp/provisional2_message.txt
+        src: /vagrant/files/ftp/provisional2_message.txt
         dest: /etc/vsftpd.banner
+        owner: root
+        group: root
+        mode: '0644'
 
     - name: Copy the resolv.conf
       ansible.builtin.copy:
         src: "../resolv.conf"
         dest: /etc/
+        owner: root
+        group: root
+        mode: '0644'
 
 - name: Configure FTP service in mirror server
   hosts: mirror
-  become: True
+  become: true
   vars:
     charles_password: "{{ '1234' | password_hash('sha512') }}"
     laura_password: "{{ '1234' | password_hash('sha512') }}"
   tasks:
     - name: Copy ftp.vsftpd configuration file
       ansible.builtin.copy:
-        src: ../files/ftp/mirror.vsftpd.conf
+        src: /vagrant/files/ftp/mirror.vsftpd.conf
         dest: /etc/vsftpd.conf
+        owner: root
+        group: root
+        mode: '0644'
 
     - name: Copy chroot_list for mirror
       ansible.builtin.copy:
-        src: ../files/ftp/vsftpd.chroot_list
+        src: /vagrant/files/ftp/vsftpd.chroot_list
         dest: /etc/vsftpd.chroot_list
+        owner: root
+        group: root
+        mode: '0644'
 
     - name: Create users for mirror
       block:
@@ -93,16 +108,19 @@
 
         - name: Install dependencies to obtain SSL certificate
           ansible.builtin.package:
-            update_cache: yes
-            name: python3-cryptography
-
+            update_cache: true
+            name:
+              - python3-cryptography
+              - openssl
+              - libssl-dev
+            state: present
         - name: Generate SSL Private Key
-          openssl_privatekey:
+          community.crypto.openssl_privatekey:
             path: "{{ ssl_path }}/ssl-cert-priv.key"
             size: 2048
 
         - name: Generate sign request (CSR)
-          openssl_csr:
+          community.crypto.openssl_csr:
             path: "{{ ssl_path }}/ssl-sign.csr"
             privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
             common_name: "ssl-ftp-cert"
@@ -111,7 +129,7 @@
             email_address: "team5@ieszaidinvergeles.org"
 
         - name: Obtain SSL public key
-          openssl_certificate:
+          community.crypto.x509_certificate:
             path: /etc/ssl/certs/ssl-cert-pub.pem
             privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
             csr_path: "{{ ssl_path }}/ssl-sign.csr"
@@ -121,10 +139,13 @@
       ansible.builtin.copy:
         src: "../resolv.conf"
         dest: /etc/
+        owner: root
+        group: root
+        mode: '0644'
 
 - name: Restart vsftpd service
   hosts: ftp_servers
-  become: True
+  become: true
   tasks:
     - name: Restart vsftpd service
       ansible.builtin.service:
