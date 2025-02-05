@@ -5,6 +5,11 @@ Vagrant.configure("2") do |config|
   ansible_config_file = "./ansible/ansible.cfg"
   ansible_inventory_path = "./ansible/inventory/vagrant_inventory.yml"
 
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 2
+  end
+
   config.vm.define "dns" do |dns|
     dns.vm.hostname = "ns.sri.ies"
     dns.vm.network "private_network", ip: "192.168.57.10"
