@@ -348,6 +348,14 @@ rsa_private_key_file=/etc/ssl/private/ssl-cert-priv.key
 ssl_enable=YES
 ----
 
+As you can see charles is chrooted
+
+image::assets/charles_chroot.jpg[]
+
+And laura is not chrooted as she can go to /
+
+image::assets/laura_chroot.jpg[]
+
 
 Now I'm going to explain the problems I had trying to work at home.
 
