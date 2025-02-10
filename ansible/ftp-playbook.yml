@@ -15,7 +15,7 @@
   tasks:
     - name: Copy ftp.vsftpd configuration file
       ansible.builtin.copy:
-        src: /files/ftp/ftp.vsftpd.conf
+        src: "{{ ftp_path }}/ftp.vsftpd.conf"
         dest: /etc/vsftpd.conf
         owner: root
         group: root
@@ -37,16 +37,8 @@
 
     - name: Copy banner file
       ansible.builtin.copy:
-        src: /vagrant/files/ftp/vsftpd.banner
+        src: "{{ ftp_path }}/vsftpd.banner.txt"
         dest: /etc/vsftpd.banner
-        owner: root
-        group: root
-        mode: '0644'
-
-    - name: Copy the resolv.conf
-      ansible.builtin.copy:
-        src: "../resolv.conf"
-        dest: /etc/
         owner: root
         group: root
         mode: '0644'
@@ -60,7 +52,7 @@
   tasks:
     - name: Copy ftp.vsftpd configuration file
       ansible.builtin.copy:
-        src: /vagrant/files/ftp/mirror.vsftpd.conf
+        src: "{{ ftp_path }}/mirror.vsftpd.conf"
         dest: /etc/vsftpd.conf
         owner: root
         group: root
@@ -68,7 +60,7 @@
 
     - name: Copy chroot_list for mirror
       ansible.builtin.copy:
-        src: /vagrant/files/ftp/vsftpd.chroot_list
+        src: "{{ ftp_path }}/vsftpd.chroot_list"
         dest: /etc/vsftpd.chroot_list
         owner: root
         group: root
@@ -134,14 +126,6 @@
             privatekey_path: "{{ ssl_path }}/ssl-cert-priv.key"
             csr_path: "{{ ssl_path }}/ssl-sign.csr"
             provider: selfsigned
-
-    - name: Copy the resolv.conf
-      ansible.builtin.copy:
-        src: "../resolv.conf"
-        dest: /etc/
-        owner: root
-        group: root
-        mode: '0644'
 
 - name: Restart vsftpd service
   hosts: ftp_servers
