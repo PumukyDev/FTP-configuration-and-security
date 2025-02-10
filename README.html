@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.23">
+<title>FTP Configuration and Security</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment the following line when using as a custom stylesheet */
+/* @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"; */
+html{font-family:sans-serif;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+b,strong{font-weight:bold}
+abbr{font-size:.9em}
+abbr[title]{cursor:help;border-bottom:1px dotted #dddddf;text-decoration:none}
+dfn{font-style:italic}
+hr{height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type=checkbox],input[type=radio]{padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,::before,::after{box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;line-height:1;position:relative;cursor:auto;-moz-tab-size:4;-o-tab-size:4;tab-size:4;word-wrap:anywhere;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.square{list-style-type:square}
+ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:1px solid #dedede;word-wrap:normal}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre).nobreak{word-wrap:normal}
+:not(pre).nowrap{white-space:nowrap}
+:not(pre).pre-wrap{white-space:pre-wrap}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.2),inset 0 0 0 .1em #fff;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin:0 auto;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child{border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border:1px solid #e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:none;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:hsla(0,0%,100%,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details{margin-left:1.25rem}
+details>summary{cursor:pointer;display:block;position:relative;line-height:1.6;margin-bottom:.625rem;outline:none;-webkit-tap-highlight-color:transparent}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";border:solid transparent;border-left:solid;border-width:.3em 0 .3em .5em;position:absolute;top:.5em;left:-1.25rem;transform:translateX(15%)}
+details[open]>summary::before{border:solid transparent;border-top:solid;border-width:.5em .3em 0;transform:translateY(15%)}
+details>summary::after{content:"";width:1.25rem;height:1em;position:absolute;top:.3em;left:-1.25rem}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class=paragraph]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:first-child,.sidebarblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child,.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos,pre.pygments .linenos{border-right:1px solid;opacity:.35;padding-right:.5em;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+pre.pygments span.linenos{display:inline-block;margin-right:.75em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans-serif;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;font-size:.85rem;text-align:left;margin-right:0}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content{margin-bottom:1.25em;word-wrap:anywhere}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>*>tr>*{border-width:1px}
+table.grid-cols>*>tr>*{border-width:0 1px}
+table.grid-rows>*>tr>*{border-width:1px 0}
+table.frame-all{border-width:1px}
+table.frame-ends{border-width:1px 0}
+table.frame-sides{border-width:0 1px}
+table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-child>*{border-top-width:0}
+table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
+table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
+table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
+table.stripes-all>*>tr,table.stripes-odd>*>tr:nth-of-type(odd),table.stripes-even>*>tr:nth-of-type(even),table.stripes-hover>*>tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+li>p:empty:only-child::before{content:"";display:inline-block}
+ul.checklist>li>p:first-child{margin-left:-1em}
+ul.checklist>li>p:first-child>.fa-square-o:first-child,ul.checklist>li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist>li>p:first-child>input[type=checkbox]:first-child{margin-right:.25em}
+ul.inline{display:flex;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist2{word-wrap:anywhere}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:4px solid #fff;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active,#footnotes .footnote a:first-of-type:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);border-radius:50%;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,td.hdlist1,span.alt,summary{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]{border-bottom:1px dotted}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#header,#content,#footnotes,#footer{max-width:none}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media amzn-kf8,print{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>FTP Configuration and Security</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>FTP (File Transfer Protocol) is a standard network protocol used to transfer files between a client and a server on a computer network. It is widely used for sharing files, backing up data, and managing website files. In this guide, you will learn how to configure an FTP server for both anonymous and local user authentication, as well as implement security measures such as encryption and access controls.</p>
+</div>
+<div class="paragraph">
+<p>For more information on the activity requirements, you can view the detailed document <a href="ftp-anonymous-and-local-users.pdf">here</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can download the documentation in PDF format <a href="https://github.com/PumukyDev/ftp-server/blob/gh-pages/ebook.pdf">here</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ftp">FTP</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_install_ftp_server_software_on_the_assigned_machine">1. Install FTP server software on the assigned machine</h3>
+<div class="paragraph">
+<p>The first step is to install the <code>vsftpd</code> package, which is a secure and fast FTP server. We will use Ansible&#8217;s <code>apt</code> module to ensure the package is installed and up-to-date.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Install vsftpd package
+  ansible.builtin.apt:
+    name: vsftpd
+    state: present
+    update_cache: yes</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>This ensures that the server software is installed and ready for configuration.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_configure_the_ftp_server_to_allow_anonymous_connections">2. Configure the FTP server to allow anonymous connections</h3>
+<div class="paragraph">
+<p>To allow unauthenticated users to access the FTP server, we need to enable anonymous access in the <code>vsftpd.conf</code> configuration file. This is often required for public file sharing but should be carefully secured.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">anonymous_enable=YES</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enabling anonymous access allows users to connect without providing credentials, which is useful for providing public file access.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_set_secure_access_permissions_for_shared_directories">3. Set secure access permissions for shared directories</h3>
+<div class="paragraph">
+<p>We need to create a root directory for anonymous FTP access, ensuring that it is restricted to read-only access. This step ensures the security of the shared data.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Create anonymous FTP root directory
+  ansible.builtin.file:
+    path: /srv/ftp
+    state: directory
+    owner: ftp
+    group: ftp
+    mode: '0555'</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The directory <code>/srv/ftp</code> is created with read-only permissions (<code>0555</code>), ensuring that anonymous users can only download files but cannot modify or delete anything.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_local_users_are_not_allowed">4. Local users are not allowed</h3>
+<div class="paragraph">
+<p>If you want to prevent local users from logging into the FTP server, you can disable local user login. This is useful for securing the server if you only want to allow anonymous access.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">local_enable=NO</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Disabling local user login (<code>local_enable=NO</code>) prevents any locally authenticated users from accessing the FTP server.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_5_anonymous_users_have_no_write_permissions">5. Anonymous users have NO write permissions</h3>
+<div class="paragraph">
+<p>To enhance security, we ensure that anonymous users do not have the ability to upload files, create directories, or modify existing files.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">write_enable=NO
+anon_upload_enable=NO
+anon_mkdir_write_enable=NO</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>These settings prevent anonymous users from modifying or adding files, ensuring that the FTP server is only used for file retrieval, not file modification.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_6_anonymous_users_are_not_asked_for_an_anonymous_password">6. Anonymous users are not asked for an anonymous password</h3>
+<div class="paragraph">
+<p>To simplify the connection process for anonymous users, we configure the server so that users do not need to enter a password when connecting anonymously.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">no_anon_password=YES</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Setting <code>no_anon_password=YES</code> ensures that anonymous users are not prompted for a password, making the server more accessible.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_7_data_connection_timeout_will_be_30_seconds">7. Data connection timeout will be 30 seconds</h3>
+<div class="paragraph">
+<p>To prevent hanging or abandoned connections from taking up server resources, we set a timeout for the data connection.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">data_connection_timeout=30</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>data_connection_timeout</code> ensures that inactive connections are terminated after 30 seconds, freeing up resources and preventing potential security risks.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_8_limit_max_data_transfer_bandwidth_to_5kbs">8. Limit max data transfer bandwidth to 5KB/s</h3>
+<div class="paragraph">
+<p>To prevent excessive bandwidth usage by anonymous users, we set a maximum data transfer rate limit.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">anon_max_rate=5120</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>This setting restricts anonymous users to a data transfer rate of 5KB per second (<code>5120</code> bytes), which helps avoid server overload and controls network bandwidth.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_9_the_server_shows_a_banner_welcome_to_sri_ftp_anonymous_server">9. The server shows a banner "Welcome to SRI FTP anonymous server"</h3>
+<div class="paragraph">
+<p>Adding a custom banner is a good way to provide information to users when they connect to the FTP server. This can be a greeting message or important instructions.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">ftpd_banner=Welcome to SRI FTP anonymous server</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>ftpd_banner</code> setting allows you to display a welcoming message, informing users about the server or any specific usage policies.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_10_the_server_shows_an_ascii_art_file_in_the_login_directory">10. The server shows an ASCII art file in the login directory</h3>
+<div class="paragraph">
+<p>To further personalize the experience, the server can display an ASCII art banner. We will use Ansible to copy an ASCII art file to the correct directory on the server.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Copy banner file
+  ansible.builtin.copy:
+    src: ../files/ftp/provisional2_message.txt
+    dest: /etc/vsftpd.banner</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>This task copies the ASCII art file to the server, which will be displayed during login.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then, specify the banner file location in the <code>vsftpd.conf</code> configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">banner_file=/etc/vsftpd.banner</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>This setting ensures that the ASCII art file is shown when users log into the FTP server.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_11_test_the_configuration_with_two_clients">11. Test the configuration with two clients</h3>
+<div class="paragraph">
+<p>We can try with the terminal, we can see that the connection was successful.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ftp_test1.jpg" alt="test_clients">
+</div>
+</div>
+<div class="paragraph">
+<p>Now, we try with FileZilla, just enter with anonymous:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ftp_test2.jpg" alt="test_clients">
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see we can connect perfectly.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ftp_test3.jpg" alt="test_clients">
+</div>
+</div>
+<div class="sect3">
+<h4 id="_passive_mode">Passive Mode</h4>
+<div class="paragraph">
+<p>Passive mode is the default mode in FileZilla, so just by connecting to the server we are using passive mode.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/passive1.jpg" alt="Testing Passive Mode">
+</div>
+</div>
+<div class="paragraph">
+<p>We are correctly using passive mode.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/passive2.jpg" alt="Testing Passive Mode">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_active_mode">Active Mode</h4>
+<div class="paragraph">
+<p>If we want to connect with active mode go yo "Tranfer Settings" and select "Active".</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/active1.jpg" alt="Testing Active Mode">
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see we are conneting correctly with active mode.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/active2.jpg" alt="Testing Active Mode">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ftp_mirror">FTP MIRROR</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_configuration_of_the_ftp_server_with_local_users">1.Configuration of the FTP Server with Local Users</h3>
+<div class="paragraph">
+<p>We have created the configuration of the mirror machine using an Ansible archive. Below is a step-by-step explanation of all the Ansible features associated with the mirror FTP machine.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_inventory_configuration">2.Inventory Configuration</h3>
+<div class="paragraph">
+<p>We created a group for the two FTP servers called <code>FTPS</code>. This allows us to install the same software on both machines simultaneously. The inventory file looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">ftps:
+  hosts:
+    mirror:
+      ansible_ssh_port: 2200
+    ftp:
+      ansible_ssh_port: 2300</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_ftp_service_configuration">3.FTP Service Configuration</h3>
+<div class="paragraph">
+<p>Below is the configuration defined in the <code>ftp-playbook.yml</code> file. This playbook ensures the FTP service is installed on both machines.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">---
+- name: Configure FTP service
+  hosts: ftps
+  become: True
+  tasks:
+    - name: Install vsftpd package
+      ansible.builtin.apt:
+        name: vsftpd
+        state: present
+        update_cache: yes</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_mirror_specific_configuration">4.Mirror-Specific Configuration</h3>
+<div class="paragraph">
+<p>This section details the configuration of the mirror FTP server.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_5_variables_for_passwords_and_configuration_paths">5.Variables for Passwords and Configuration Paths</h3>
+<div class="paragraph">
+<p>The following variables define the passwords for the users and the path for the configuration file. The configuration file will be copied to the correct destination folder.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Configure FTP service in mirror server
+  hosts: mirror
+  become: True
+  vars:
+    charles_password: "{{ '1234' | password_hash('sha512') }}"
+    laura_password: "{{ '1234' | password_hash('sha512') }}"
+  tasks:
+    - name: Copy ftp.vsftpd configuration file
+      ansible.builtin.copy:
+        src: ../files/ftp/mirror.vsftpd.conf
+        dest: /etc/vsftpd.conf</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_6_chroot_list_configuration">6.Chroot List Configuration</h3>
+<div class="paragraph">
+<p>The following configuration defines the chroot file path:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Copy chroot_list for mirror
+  ansible.builtin.copy:
+    src: ../files/ftp/vsftpd.chroot_list
+    dest: /etc/vsftpd.chroot_list</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_7_user_configuration">7.User Configuration</h4>
+<div class="paragraph">
+<p>The users <code>charles</code> and <code>laura</code> are created with their respective configurations.</p>
+</div>
+<div class="paragraph">
+<p><code>charles</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Create users for mirror
+  block:
+    - name: Create user charles
+      ansible.builtin.user:
+        name: charles
+        password: "{{ charles_password }}"
+        shell: /bin/bash
+        state: present</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>laura</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Create user laura
+  ansible.builtin.user:
+    name: laura
+    password: "{{ laura_password }}"
+    shell: /bin/bash
+    state: present</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_8_directory_configuration_for_users">8.Directory Configuration for Users</h3>
+<div class="paragraph">
+<p>The directories for <code>charles</code> and <code>laura</code> are created with appropriate ownership and permissions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Create home directory for charles
+  ansible.builtin.file:
+    path: /home/charles/ftp
+    state: directory
+    owner: charles
+    group: charles
+    mode: '0755'
+
+- name: Create home directory for laura
+  ansible.builtin.file:
+    path: /home/laura/ftp
+    state: directory
+    owner: laura
+    group: laura
+    mode: '0755'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_9_service_restart_configuration">9.Service Restart Configuration</h3>
+<div class="paragraph">
+<p>At the end of the playbook, the FTP service is restarted to apply all changes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Restart vsftpd service
+  hosts: ftps
+  become: True
+  tasks:
+    - name: Restart vsftpd service
+      ansible.builtin.service:
+        name: vsftpd
+        state: restarted</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_chroot_list_file">Chroot List File</h4>
+<div class="paragraph">
+<p>The <code>chroot_list</code> file specifies the user that is not restricted to their home directory. In this case, only <code>laura</code> is listed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-plain" data-lang="plain">laura</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_10_ftp_server_configuration_file">10.FTP Server Configuration File</h3>
+<div class="paragraph">
+<p>Below is the complete configuration for the FTP server, including settings for authentication, chroot, SSL, and user restrictions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">listen=YES
+listen_ipv6=NO
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+anon_upload_enable=NO
+anon_mkdir_write_enable=NO
+dirmessage_enable=YES
+use_localtime=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+data_connection_timeout=30
+ftpd_banner=Welcome to SRI FTP server
+chroot_local_user=YES
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+allow_writeable_chroot=YES
+secure_chroot_dir=/var/run/vsftpd/empty
+rsa_cert_file=/etc/ssl/certs/ssl-cert-pub.pem
+rsa_private_key_file=/etc/ssl/private/ssl-cert-priv.key
+ssl_enable=YES</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see charles is chrooted</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/charles_chroot.jpg" alt="charles chroot">
+</div>
+</div>
+<div class="paragraph">
+<p>And laura is not chrooted as she can go to /</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/laura_chroot.jpg" alt="laura chroot">
+</div>
+</div>
+<div class="paragraph">
+<p>Now I&#8217;m going to explain the problems I had trying to work at home.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_report_on_the_configuration_and_troubleshooting_process_for_nested_virtualization">Report on the Configuration and Troubleshooting Process for Nested Virtualization</h3>
+<div class="paragraph">
+<p><strong>1. Initial Context</strong>
+- <strong>Main Device</strong>: iMac 2019 with dual boot (macOS and Windows 10).
+- <strong>Objective</strong>: Set up a development environment with VirtualBox, Vagrant, and Ansible on a virtualized Ubuntu machine.</p>
+</div>
+<div class="paragraph">
+<p><strong>2. Initial Setup</strong>
+- <strong>On Windows 10 (iMac)</strong>:
+  - Installed VirtualBox.
+  - Created a virtual machine with Ubuntu.
+- <strong>On the Ubuntu VM</strong>:
+  - Installed Visual Studio Code (VS Code).
+  - Installed Vagrant and Ansible.
+  - Attempted to configure VirtualBox within the VM (nested virtualization).</p>
+</div>
+<div class="paragraph">
+<p><strong>3. Issues Encountered</strong>
+- <strong>Problem</strong>: Nested virtualization did not work despite being enabled in VirtualBox settings.
+- <strong>Investigation and Tests</strong>:
+  - Verified VirtualBox settings.
+  - Checked that nested virtualization was enabled.
+  - Confirmed the processor supported virtualization (Intel VT-x).
+- <strong>Outcome</strong>: Unable to get nested virtualization working.</p>
+</div>
+<div class="paragraph">
+<p><strong>4. Implemented Solution</strong>
+- Decided to use a different device to bypass the limitations of the environment.</p>
+</div>
+<div class="paragraph">
+<p><strong>5. Configuration on the New Device</strong>
+- <strong>Alternative Device</strong>: Windows Surface with Windows 10.
+- <strong>Steps Taken</strong>:
+  - Created an empty partition on Windows to install Ubuntu.
+  - Used Rufus to create a bootable USB with Ubuntu 24.
+  - Installed Ubuntu manually on the empty partition.
+  - Configured dual boot with GRUB (no issues).</p>
+</div>
+<div class="paragraph">
+<p><strong>6. Environment Setup on Ubuntu</strong>
+- <strong>Installed</strong>:
+  - VS Code.
+  - Vagrant.
+  - Ansible.
+- <strong>Issues Found</strong>:
+  - Problems with VirtualBox on Ubuntu.</p>
+</div>
+<div class="paragraph">
+<p><strong>7. Final Observations</strong>
+- The initial configuration on the iMac with dual boot was unfeasible due to nested virtualization limitations in VirtualBox.
+- Installing Ubuntu on the Surface resolved the base environment issues, enabling further setup.
+- Some issues with VirtualBox on the new environment still need to be resolved.</p>
+</div>
+<div class="paragraph">
+<p><strong>8. Recommendations</strong>
+- Verify full support for nested virtualization on both hardware and software before attempting.
+- Consider alternative environments like WSL2 to reduce complexity on Windows systems.
+- Document VirtualBox errors on Ubuntu for specific solutions in future iterations.</p>
+</div>
+<div class="paragraph">
+<p><strong>9. Key Commands Used During the Process</strong>
+- <strong>Create Bootable USB</strong>:
+  - Done via Rufus on Windows.
+- <strong>Install Packages on Ubuntu</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo apt update &amp;&amp; sudo apt install virtualbox vagrant ansible</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_report_on_virtualbox_installation_attempts_on_ubuntu">Report on VirtualBox Installation Attempts on Ubuntu</h3>
+<div class="paragraph">
+<p><strong>1. Initial Context</strong>
+- <strong>OS</strong>: Ubuntu.
+- <strong>Purpose</strong>: Install VirtualBox for managing virtual machines.
+- <strong>Prior Changes</strong>: Secure Boot disabled due to compatibility issues.</p>
+</div>
+<div class="paragraph">
+<p><strong>2. First Attempt</strong>
+- <strong>Command Used</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo apt install virtualbox</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Result</strong>: Error indicating the version in the default repositories was outdated or incompatible with the current kernel.</p>
+</li>
+<li>
+<p><strong>Additional Action</strong>: Added the official Oracle repository for VirtualBox:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo add-apt-repository "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+  sudo apt update</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>3. Second Attempt</strong>
+- <strong>Command Used After Adding the Repository</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo apt install virtualbox-6.1</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Result</strong>: Dependency errors (e.g., missing <code>dkms</code> for kernel module compilation).</p>
+</li>
+<li>
+<p><strong>Additional Actions</strong>: Installed required dependencies:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo apt install dkms build-essential linux-headers-$(uname -r)
+  sudo apt install virtualbox-6.1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>4. Issues with Secure Boot</strong>
+- <strong>Problem</strong>: Errors during installation related to kernel module signing due to Secure Boot.
+- <strong>Solution</strong>: Disabled Secure Boot in BIOS/UEFI. Reattempted installation, successfully compiled, and loaded kernel modules.</p>
+</div>
+<div class="paragraph">
+<p><strong>5. Final Observations</strong>
+- Main issues:
+  - Outdated repositories.
+  - Missing dependencies for kernel module compilation.
+  - Secure Boot blocking kernel module loading.
+- Key steps: Adding the official repository and disabling Secure Boot.</p>
+</div>
+<div class="paragraph">
+<p><strong>6. Recommendations</strong>
+- Verify kernel version and ensure headers are installed.
+- Always use Oracle’s official repository for the latest VirtualBox version.
+- Disable Secure Boot when compiling or signing kernel modules is required.</p>
+</div>
+<div class="paragraph">
+<p><strong>Commands for Future Reference</strong>
+- <strong>Add Official VirtualBox Repository</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo add-apt-repository "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+  sudo apt update</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Install VirtualBox and Dependencies</strong>:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo apt install dkms build-essential linux-headers-$(uname -r) virtualbox-6.1</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="_report_on_python3_passlib_installation_attempts_on_ubuntu">Report on python3-passlib Installation Attempts on Ubuntu</h3>
+<div class="paragraph">
+<p><strong>1. Initial Context</strong>
+- <strong>OS</strong>: Ubuntu.
+- <strong>Purpose</strong>: Install <code>python3-passlib</code> library for a project.
+- <strong>Prior Changes</strong>: Secure Boot disabled to enable VirtualBox.</p>
+</div>
+<div class="paragraph">
+<p><strong>2. First Attempt</strong>
+- <strong>Command Used</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo apt install python3-passlib</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Result</strong>: Error indicating the package could not be located, likely due to:</p>
+</li>
+<li>
+<p>Outdated repositories.</p>
+</li>
+<li>
+<p>Missing configuration for required repositories.</p>
+</li>
+<li>
+<p><strong>Additional Action</strong>: Verified internet connection and updated repositories:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo apt update</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>3. Second Attempt</strong>
+- <strong>Command with pip</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  pip3 install passlib</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Result</strong>: Permission errors for global installation.</p>
+</li>
+<li>
+<p><strong>Proposed Solution</strong>: Run the command with superuser privileges:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>4. Virtual Environment Creation</strong>
+- <strong>Commands Used</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  python3 -m venv env
+  source env/bin/activate
+  pip install passlib</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Result</strong>: Created virtual environment, but <code>pip install passlib</code> failed due to an outdated <code>pip</code>.</p>
+</li>
+<li>
+<p><strong>Additional Action</strong>: Updated <code>pip</code> in the virtual environment:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  pip install --upgrade pip</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Successfully installed `passlib` afterward.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>5. Final Observations</strong>
+- Secure Boot does not directly affect Python package installations.
+- Main issues:
+  - Outdated Ubuntu repositories.
+  - Permissions for global installation with <code>pip</code>.
+  - Outdated <code>pip</code> in the virtual environment.
+- Using a virtual environment was the most effective solution.</p>
+</div>
+<div class="paragraph">
+<p><strong>6. Recommendations</strong>
+- Use virtual environments to avoid permission and dependency issues.
+- Ensure repositories are updated before installing packages with <code>apt</code>.
+- Regularly update <code>pip</code> to avoid compatibility issues.</p>
+</div>
+<div class="paragraph">
+<p><strong>Command for Future Reference</strong>
+- <strong>Install python3-passlib with apt</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  sudo apt update &amp;&amp; sudo apt install python3-passlib</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Using a Virtual Environment</strong>:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>  python3 -m venv env
+  source env/bin/activate
+  pip install passlib</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_4_3_implementation_of_encryption_ssltls">4.3. Implementation of Encryption (SSL/TLS)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SSL/TLS (Secure Sockets Layer / Transport Layer Security) are cryptographic protocols designed to provide secure communication over a computer network. Implementing SSL/TLS on an FTP server ensures that data transferred between the client and the server is encrypted, providing confidentiality and integrity of the files being transferred. It also prevents eavesdropping, tampering, and forgery of data.</p>
+</div>
+<div class="paragraph">
+<p>Here we will document the process of configuring SSL/TLS encryption on a second FTP server to secure file transfers.</p>
+</div>
+<div class="sect2">
+<h3 id="_1_configure_the_ssltls_security_layer_on_the_second_ftp_server">1. Configure the SSL/TLS security layer on the second FTP server</h3>
+<div class="paragraph">
+<p>To enable SSL/TLS encryption on the second FTP server, we need to modify the <code>vsftpd.conf</code> configuration file and configure the server to support secure connections.</p>
+</div>
+<div class="paragraph">
+<p>First, ensure that the <code>vsftpd</code> package has SSL/TLS support enabled. The SSL/TLS configuration can be added to <code>vsftpd.conf</code> by specifying the necessary settings for SSL and the paths to the SSL certificate and key files.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ini" data-lang="ini">ssl_enable=YES
+rsa_cert_file=/etc/ssl/certs/ssl-cert-pub.pem
+rsa_private_key_file=/etc/ssl/private/ssl-cert-priv.key</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ssl_enable=YES</code>: Enables SSL/TLS support.</p>
+</li>
+<li>
+<p><code>rsa_cert_file</code>: Path to the server&#8217;s SSL certificate.</p>
+</li>
+<li>
+<p><code>rsa_private_key_file</code>: Path to the server&#8217;s private key.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These settings ensure that the server will accept secure SSL/TLS connections.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_demonstrate_the_encryption_capability_during_data_transfer">2. Demonstrate the encryption capability during data transfer</h3>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ssl_connection1.jpg" alt="ssl">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ssl_connection2.jpg" alt="ssl">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ssl_connection3.jpg" alt="ssl">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_verify_correct_configuration_using_testing_tools_and_certificate_checks">3. Verify correct configuration using testing tools and certificate checks</h3>
+<div class="paragraph">
+<p>As you can see we can connect as laura to the ftp server using FileZilla.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ssl_connection1.jpg" alt="ssl">
+</div>
+</div>
+<div class="paragraph">
+<p>It will show us the certificate.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ssl_connection2.jpg" alt="ssl">
+</div>
+</div>
+<div class="paragraph">
+<p>And we can connect to the server correctly using ssl.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ssl_connection3.jpg" alt="ssl">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_local_users_are_forced_to_connect_with_a_secure_connection">4. Local users are forced to connect with a secure connection</h3>
+<div class="paragraph">
+<p>As you can see Laura can&#8217;t connect to the server without ssl, it is a default configuration and we have not changed anything.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="assets/user_need_ssl.jpg" alt="Laura needs a secure connection">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_5_document_on_the_importance_of_encryption_in_secure_file_transfer">5. Document on the importance of encryption in secure file transfer</h3>
+<div class="paragraph">
+<p>Encryption is a critical component of securing file transfers over a network. Without encryption, sensitive data can be intercepted, tampered with, or stolen during transmission. FTP, by default, transmits data in plaintext, which means that any data sent over the network, including usernames, passwords, and file contents, can be easily read by attackers using network sniffing tools.</p>
+</div>
+<div class="paragraph">
+<p>By implementing SSL/TLS, we ensure that:
+* <strong>Data confidentiality</strong>: Files and credentials are encrypted, protecting them from unauthorized access.
+* <strong>Data integrity</strong>: SSL/TLS provides mechanisms to detect any tampering with data during transmission.
+* <strong>Authentication</strong>: Ensures that both the client and server can authenticate each other, preventing man-in-the-middle attacks.</p>
+</div>
+<div class="paragraph">
+<p>Overall, SSL/TLS encryption provides a secure environment for file transfer, reducing the risk of data breaches and ensuring compliance with security policies and regulations, such as GDPR or HIPAA.</p>
+</div>
+<div class="paragraph">
+<p>By enforcing SSL/TLS for all connections, we can ensure that both anonymous and local users transmit data securely, which is vital for maintaining the confidentiality and integrity of transferred files.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dns">DNS</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_4_4_configuration_of_dns_server">4.4. Configuration of DNS server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <strong>DNS (Domain Name System)</strong> is a system responsible for translating human-readable domain names, such as <code>ns.sri.ies</code>, into machine-readable IP addresses, and vice versa. This system is fundamental for network communication, as it allows users and applications to connect to services without needing to remember numerical IP addresses.</p>
+</div>
+<div class="paragraph">
+<p>In this task, we configured a DNS server to handle forward and reverse resolution for the <code>sri.ies</code> domain. This includes defining the records for key services within the domain (<code>ns.sri.ies</code>, <code>mirror.sri.ies</code>, <code>ftp.sri.ies</code>) and enabling external queries to be forwarded to a public DNS server. Below, I explain in detail the steps followed to complete this setup.</p>
+</div>
+<div class="sect2">
+<h3 id="_1_install_a_third_virtual_machine_with_a_ftp_server_with_authority_on_the_domain_sri_ies_this_machine_is_ns_sri_ies">1. Install a third virtual machine with a FTP server with authority on the domain sri.ies. This machine is ns.sri.ies.</h3>
+<div class="paragraph">
+<p>This machine is ns.sri.ies.</p>
+</div>
+<div class="paragraph">
+<p>The first step was to install and configure a virtual machine designated as <code>ns.sri.ies</code>. This machine serves two purposes:
+  - It acts as the primary DNS server for the <code>sri.ies</code> domain.
+  - It provides authority over the <code>sri.ies</code> domain, meaning it is responsible for responding to DNS queries about names and IP addresses within this domain.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-ruby" data-lang="ruby">config.vm.define "dns" do |dns|
+    dns.vm.hostname = "ns.sri.ies"
+    dns.vm.network "private_network", ip: "192.168.57.10"
+    dns.vm.network "forwarded_port", guest: 22, host: 2100
+end</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To achieve this:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>I installed the BIND9 DNS server software on the virtual machine.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Install bind9
+  apt:
+   name:
+   - bind9
+   - bind9utils
+   - bind9-doc
+   update_cache: yes</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>I configured the <code>named.conf.local</code> file to define the forward and reverse zones for the domain <code>sri.ies</code>. The forward zone resolves domain names to IP addresses, and the reverse zone resolves IP addresses back to domain names.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">zone "sri.ies" {
+      type master;
+      file "/etc/bind/db.sri.ies";
+  };</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Finally, I created the zone files (<code>/etc/bind/db.sri.ies</code> for forward resolution and <code>/etc/bind/db.192.168.57</code> for reverse resolution) to include the necessary DNS records.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_it_has_record_for_mirror_sri_ies_that_points_to_the_anonymous_ftp_server_and_ftp_sri_ies_for_the_local_users_ftp_server">2. It has record for mirror.sri.ies that points to the anonymous FTP server and ftp.sri.ies for the local user&#8217;s FTP server.</h3>
+<div class="paragraph">
+<p>Next, I configured DNS records to define the key services within the <code>sri.ies</code> domain:
+  - <strong>Forward resolution (A records):</strong>
+	- <code>ns.sri.ies</code> &#8594; <code>192.168.57.10</code>
+	- <code>mirror.sri.ies</code> &#8594; <code>192.168.57.20</code> (anonymous FTP server)
+	- <code>ftp.sri.ies</code> &#8594; <code>192.168.57.30</code> (FTP server for local users)
+  - <strong>Reverse resolution (PTR records):</strong>
+	- <code>192.168.57.10</code> &#8594; <code>ns.sri.ies</code>
+	- <code>192.168.57.20</code> &#8594; <code>mirror.sri.ies</code>
+	- <code>192.168.57.30</code> &#8594; <code>ftp.sri.ies</code></p>
+</div>
+<div class="paragraph">
+<p>The forward records are stored in the forward zone file (<code>db.sri.ies</code>), while the reverse records are in the reverse zone file (<code>db.192.168.57</code>).</p>
+</div>
+<div class="paragraph">
+<p>These records allow devices in the network to resolve domain names to their corresponding IP addresses and vice versa, ensuring proper connectivity.</p>
+</div>
+<div class="sect3">
+<h4 id="_db_sri_ies">db.sri.ies</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">; Zona sri.ies
+$ORIGIN sri.ies.
+$TTL 604800
+@       IN      SOA     ns.sri.ies. admin.sri.ies. (
+		  2           ; Serial
+		  604800      ; Refresh
+		  86400       ; Retry
+		  2419200     ; Expire
+		  604800 )    ; Negative Cache TTL
+  ;
+@       IN      NS      ns.sri.ies.
+ns      IN      A       192.168.57.10
+mirror  IN      A       192.168.57.20
+ftp     IN      A       192.168.57.30</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_db_192_168_57">db.192.168.57</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">; Zona inversa para 192.168.57.0/24
+$TTL    604800
+@       IN      SOA     ns.sri.ies. admin.sri.ies. (
+		  2           ; Serial
+		  604800      ; Refresh
+		  86400       ; Retry
+		  2419200     ; Expire
+		  604800 )    ; Negative Cache TTL
+  ;
+    @       IN      NS      ns.sri.ies.
+10        IN      PTR     ns.sri.ies.
+20        IN      PTR     mirror.sri.ies.
+30        IN      PTR     ftp.sri.ies.</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_redirect_queries_for_other_domains_to_cloudfares_server_1_1_1_1">3. Redirect queries for other domains to Cloudfare&#8217;s server 1.1.1.1</h3>
+<div class="paragraph">
+<p>To ensure the DNS server could resolve domain names outside the <code>sri.ies</code> domain, I configured DNS forwarding in the <code>named.conf.options</code> file. This involved specifying Cloudflare&#8217;s public DNS server (<code>1.1.1.1</code>) as the forwarder for any queries not related to the <code>sri.ies</code> domain.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">options {
+	directory "/var/cache/bind";
+
+    forwarders {
+	    1.1.1.1; // Cloudflare DNS
+        1.0.0.1; // Cloudflare DNS
+    };
+
+    dnssec-validation auto;
+
+    listen-on { any; };
+    listen-on-v6 { any; };
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This step ensures that devices within the network can access both internal and external services seamlessly. For example:
+  - Internal query: Resolving <code>ftp.sri.ies</code> is handled by the local DNS server.
+  - External query: Resolving <code>www.google.com</code> is forwarded to Cloudflare&#8217;s DNS server.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_both_ftp_server_has_ns_sri_ies_as_name_server">4. Both FTP server has ns.sri.ies as name server.</h3>
+<div class="paragraph">
+<p>Finally, I configured both FTP servers (<code>mirror.sri.ies</code> and <code>ftp.sri.ies</code>) to use <code>ns.sri.ies</code> as their DNS name server. This ensures that both servers can:
+  - Resolve domain names within the <code>sri.ies</code> domain, such as <code>ftp.sri.ies</code> or <code>mirror.sri.ies</code>.
+  - Forward external queries to the Cloudflare DNS server through <code>ns.sri.ies</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="_resolv_conf">resolv.conf</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">nameserver 192.168.57.10
+search sri.ies</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_mirror_sri_ies">mirror.sri.ies</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">- name: Copy the resolv.conf
+ansible.builtin.copy:
+src: "../resolv.conf"
+dest: /etc/</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_comprobation">Comprobation:</h4>
+<div class="imageblock">
+<div class="content">
+<img src="assets/mirror.png" alt="Comprobation">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ftp_sri_ies">ftp.sri.ies</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">- name: Copy the resolv.conf
+ansible.builtin.copy:
+  src: "../resolv.conf"
+  dest: /etc/</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_comprobation_2">Comprobation:</h4>
+<div class="imageblock">
+<div class="content">
+<img src="assets/ftp_test4.png" alt="Comprobation">
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration was validated by testing the resolution of both forward and reverse records using tools like <code>dig</code> and a custom Bash script (<code>dns-test.sh</code>). The script verified that:
+  - Forward queries (e.g., <code>dig ftp.sri.ies</code>) return the correct IP addresses.
+  - Reverse queries (e.g., <code>dig -x 192.168.57.30</code>) return the correct domain names.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_dns_test_sh">dns-test.sh</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">set -euo pipefail
+
+function resolve () {
+dig $nameserver +short $@
+}
+
+nameserver=@$1
+
+resolve ns.sri.ies
+resolve ftp.sri.ies
+resolve mirror.sri.ies
+
+resolve -x 192.168.57.10
+resolve -x 192.168.57.20
+resolve -x 192.168.57.30</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_comprobation_3">Comprobation:</h4>
+<div class="imageblock">
+<div class="content">
+<img src="assets/script.png" alt="Comprobation">
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_extra_information">Extra information</h3>
+<div class="paragraph">
+<p>In order to set the configuration in the dns machine I copy the files into it with the ansible provision</p>
+</div>
+<div class="sect3">
+<h4 id="_ns_playbook_yaml">ns-playbook.yaml</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Copy the DNS config
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: "{{ dns_path }}/named.conf.local", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/named.conf.options", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/db.sri.ies", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/db.192.168.57", dest: "/etc/bind/" }
+    - { src: "{{ dns_path }}/named", dest: "/etc/default/" }
+    - { src: "../resolv.conf", dest: "/etc/"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We also need to validate and restart bind9 services</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ns_playbook_yaml_2">ns-playbook.yaml</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Validate Bind9 configuration
+  command: named-checkconf
+
+- name: Restart bind9
+  service:
+    name: bind9
+    state: restarted</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And also validate the DNS configuration and the zone file</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ns_playbook_yaml_3">ns-playbook.yaml</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Validate DNS configuration
+command: named-checkconf
+register: conf_check
+failed_when: conf_check.rc != 0
+
+- name: Validate zone file
+command: named-checkzone sri.ies /etc/bind/db.sri.ies
+register: zone_check
+failed_when: zone_check.rc != 0</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_etcresolv_conf">/etc/resolv.conf</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">nameserver 192.168.57.10</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We have to add this configuration to the main machine were we are running the machines</p>
+</div>
+<div class="paragraph">
+<p>With this setup, the DNS server successfully manages all domain-related queries for the <code>sri.ies</code> network while also providing access to external resources.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-02-10 13:00:21 UTC
+</div>
+</div>
+</body>
+</html>
